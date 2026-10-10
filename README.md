@@ -9,6 +9,10 @@ CSVs to a deployed SOC threat-detection dashboard.
 | 2. Models | Random Forest baseline, XGBoost (falls back to scikit-learn's histogram GBDT), MLP, soft-voting ensemble, validation-tuned class-bias decision rule, benign-only autoencoder; macro-F1 model selection | `nids/models.py`, `nids/pipeline.py`, `nids/evaluate.py` |
 | 3. Deployment | Flask dashboard: upload a CSV, get a threat report (severity triage, attack mix, top targets, anomaly flags, live metrics if labels are present), CSV export, JSON API | `webapp/` |
 
+**Live demo: <https://ids.batch5ai.lol>** - click "Or run on the bundled held-out test sample" or upload a CICFlowMeter
+CSV (up to 50 MB on the demo server). Results of the final model are in
+[`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md).
+
 The headline metric is **macro-F1**. The test split is used once, for
 reporting only: early stopping, model selection and decision tuning all use
 the validation split.
@@ -90,6 +94,24 @@ severity and anomaly score. Large files are scored in chunks.
 * **Evaluation**: if the upload has labels, live macro-F1, accuracy, detection rate, FPR and a confusion matrix.
 * **Export**: CSV of all predictions or only the malicious flows. `POST /api/predict` (file upload or `{"flows": [...]}`) returns JSON, and `GET /health` reports status.
 * The upload limit defaults to 1 GB; set `NIDS_MAX_UPLOAD_MB` to change it.
+
+### Deploying on a Linux server
+
+`deploy/` holds what runs <https://ids.batch5ai.lol> on a Debian 13 `e2-micro` VM (1 GB RAM,
+2 GB swap): pinned server requirements (the pickled model needs the same scikit-learn, numpy and
+pandas it was trained with), a systemd unit running gunicorn with one worker on `127.0.0.1:8001`,
+an nginx site, and `setup_server.sh`, which installs everything into `/opt/nids` and requests a
+Let's Encrypt certificate:
+
+```bash
+tar -czf code.tar.gz nids webapp main.py configs deploy requirements.txt
+# copy code.tar.gz, models/nids_bundle.joblib, models/demo_test_flows.csv and
+# deploy/setup_server.sh to /tmp/nids on the server, then:
+bash /tmp/nids/setup_server.sh ids.example.com you@example.com
+```
+
+The dashboard holds about 450 MB of RAM with the Random Forest bundle loaded; on the demo VM the
+upload limit is 50 MB.
 
 ![Threat report, rendered here with the synthetic smoke-test model](docs/dashboard_report.png)
 

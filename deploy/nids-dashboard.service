@@ -1,0 +1,20 @@
+[Unit]
+Description=NIDS threat-report dashboard (Flask via gunicorn)
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/nids
+Environment=NIDS_MODEL=/opt/nids/models/nids_bundle.joblib
+# the VM has 1 GB of RAM; larger captures should be scored locally with `main.py predict`
+Environment=NIDS_MAX_UPLOAD_MB=50
+Environment=MPLCONFIGDIR=/run/nids-dashboard
+Environment=HOME=/run/nids-dashboard
+RuntimeDirectory=nids-dashboard
+ExecStart=/opt/nids/venv/bin/gunicorn --workers 1 --timeout 180 --bind 127.0.0.1:8001 "webapp.app:create_app()"
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
