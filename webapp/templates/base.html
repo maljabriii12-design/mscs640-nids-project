@@ -3,77 +3,138 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{% block title %}NIDS Threat Console{% endblock %}</title>
+<title>{% block title %}JBJ IDS | Threat Console{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
+/* Same palette and type as batch5ai.lol / lab.batch5ai.lol (JBJ Operations Room) */
 :root{
-  --bg:#f5f6f8; --panel:#ffffff; --ink:#151a22; --muted:#5b6575; --line:#e3e6eb;
-  --accent:#2457d6; --accent-soft:#e8eefc;
-  --crit:#b3261e; --crit-soft:#fbe9e7; --high:#c25e00; --high-soft:#fff1e3;
-  --med:#8a6d00; --med-soft:#fdf7dc; --ok:#1d7a46; --ok-soft:#e5f5ec;
-  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --bg:#04070b; --panel:#0a121b; --panel2:#071019; --line:#12324a; --ink:#cfe8ff; --muted:#6f8aa3;
+  --green:#22ff88; --cyan:#20d4ff; --red:#ff3d5a; --amber:#ffb020; --yellow:#e8d55a;
+  --accent:var(--green); --accent-soft:rgba(34,255,136,.12);
+  --crit:var(--red); --crit-soft:rgba(255,61,90,.14); --high:var(--amber); --high-soft:rgba(255,176,32,.14);
+  --med:var(--yellow); --med-soft:rgba(232,213,90,.12); --ok:var(--green); --ok-soft:rgba(34,255,136,.12);
+  --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
 }
-@media (prefers-color-scheme: dark){:root{
-  --bg:#0e1117; --panel:#161b24; --ink:#e7eaf0; --muted:#97a1b3; --line:#283041;
-  --accent:#7aa2ff; --accent-soft:#1c2740;
-  --crit:#ff8a80; --crit-soft:#3a1714; --high:#ffb36b; --high-soft:#3a2510;
-  --med:#e8cf5a; --med-soft:#332c0e; --ok:#6fd49a; --ok-soft:#10301f;
-}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-header{background:var(--panel);border-bottom:1px solid var(--line)}
-.wrap{max-width:1200px;margin:0 auto;padding:0 20px}
-header .wrap{display:flex;align-items:center;gap:14px;height:58px}
-.logo{width:28px;height:28px;border-radius:7px;background:var(--accent);display:grid;place-items:center;color:#fff;font-weight:700}
-header h1{font-size:17px;margin:0;font-weight:650}
-header .meta{margin-left:auto;color:var(--muted);font-size:13px}
-main{padding:26px 0 60px}
-h2{font-size:15px;margin:0 0 12px;font-weight:650}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 'Cairo',system-ui,sans-serif;overflow-x:hidden}
+#rain{position:fixed;inset:0;z-index:0;opacity:.16;pointer-events:none}
+header,main,footer{position:relative;z-index:1}
+a{color:var(--cyan)}
+code{font-family:var(--mono);color:var(--cyan);font-size:.92em}
+.wrap{max-width:1200px;margin:0 auto;padding:0 clamp(16px,3vw,28px)}
+
+/* header (matches the JBJ sites) */
+header{position:sticky;top:0;background:rgba(4,7,11,.78);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;gap:18px;min-height:62px;flex-wrap:wrap}
+.logo{font-family:var(--mono);font-weight:700;font-size:20px;color:var(--green);letter-spacing:2px;text-decoration:none;text-shadow:0 0 12px rgba(34,255,136,.45)}
+.logo b{color:var(--cyan)}
+.status{display:inline-flex;align-items:center;gap:8px;font:12px var(--mono);color:var(--green)}
+.status i{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);animation:blink 1.4s infinite}
+@keyframes blink{50%{opacity:.25}}
+nav{margin-left:auto;display:flex;gap:18px;flex-wrap:wrap}
+nav a{color:var(--muted);text-decoration:none;font-size:14px;transition:.2s}
+nav a:hover,nav a.on{color:var(--green)}
+.meta{width:100%;font:12px var(--mono);color:var(--muted);padding-bottom:8px;margin-top:-6px}
+
+main{padding:28px 0 60px}
+h2{font-size:15px;margin:0 0 12px;font-weight:700;color:var(--cyan);font-family:var(--mono);letter-spacing:.5px}
+h2::before{content:"> ";color:var(--green)}
 .grid{display:grid;gap:16px}
+.grid>*{min-width:0}
+dd,.meta,.muted{overflow-wrap:anywhere}
+@media (max-width:560px){ nav{margin-left:0;width:100%} .bar{grid-template-columns:minmax(90px,140px) 1fr 48px} }
 .g4{grid-template-columns:repeat(4,minmax(0,1fr))}
 .g2{grid-template-columns:repeat(2,minmax(0,1fr))}
 .g3{grid-template-columns:repeat(3,minmax(0,1fr))}
 @media (max-width:860px){.g4,.g3,.g2{grid-template-columns:1fr 1fr}}
 @media (max-width:560px){.g4,.g3,.g2{grid-template-columns:1fr}}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
-.kpi .v{font-size:28px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:0 0 24px rgba(32,212,255,.06),inset 0 1px 0 rgba(255,255,255,.02)}
+.kpi .v{font:700 28px var(--mono);letter-spacing:-.02em;color:var(--green);text-shadow:0 0 14px rgba(34,255,136,.35)}
 .kpi .l{color:var(--muted);font-size:13px}
-.kpi.crit .v{color:var(--crit)} .kpi.ok .v{color:var(--ok)}
+.kpi.crit .v{color:var(--crit);text-shadow:0 0 14px rgba(255,61,90,.4)} .kpi.ok .v{color:var(--ok)}
 .bar{display:grid;grid-template-columns:minmax(120px,210px) 1fr 64px;gap:10px;align-items:center;font-size:13px;margin:6px 0}
-.bar .t{height:10px;background:var(--accent-soft);border-radius:5px;overflow:hidden}
-.bar .t i{display:block;height:100%;background:var(--accent);border-radius:5px}
-.bar .n{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.bar .t{height:9px;background:rgba(32,212,255,.08);border-radius:5px;overflow:hidden}
+.bar .t i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:5px;box-shadow:0 0 10px rgba(34,255,136,.5)}
+.bar .n{text-align:right;font-family:var(--mono);color:var(--muted)}
 .bar .k{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pill{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:600}
+.pill{display:inline-block;padding:1px 9px;border-radius:999px;font:600 12px var(--mono);border:1px solid currentColor}
 .Critical{background:var(--crit-soft);color:var(--crit)}
 .High{background:var(--high-soft);color:var(--high)}
 .Medium{background:var(--med-soft);color:var(--med)}
 .None{background:var(--ok-soft);color:var(--ok)}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
-th{color:var(--muted);font-weight:600;position:sticky;top:0;background:var(--panel)}
+th{color:var(--cyan);font:600 12px var(--mono);position:sticky;top:0;background:var(--panel)}
+tbody tr:hover{background:rgba(34,255,136,.05)}
 td.num{font-family:var(--mono);font-size:12px}
 .scroll{max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:8px}
-.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--accent);background:var(--accent);color:#fff;padding:9px 16px;border-radius:8px;font-weight:600;cursor:pointer;text-decoration:none;font-size:14px}
-.btn.ghost{background:transparent;color:var(--accent)}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--green);background:var(--green);color:#04120a;padding:9px 16px;border-radius:8px;font:700 14px 'Cairo',sans-serif;cursor:pointer;text-decoration:none;box-shadow:0 0 16px rgba(34,255,136,.35);transition:.2s}
+.btn:hover{box-shadow:0 0 26px rgba(34,255,136,.6)}
+.btn.ghost{background:transparent;color:var(--green);box-shadow:none}
+.btn.ghost:hover{background:var(--accent-soft)}
 .muted{color:var(--muted)} .small{font-size:13px}
-.err{background:var(--crit-soft);color:var(--crit);padding:10px 14px;border-radius:8px;margin-bottom:16px}
-.warn{background:var(--med-soft);color:var(--med);padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:14px}
-.drop{border:2px dashed var(--line);border-radius:12px;padding:34px;text-align:center}
-.drop input{margin:14px 0}
-dl{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;margin:0;font-size:14px}
-dt{color:var(--muted)}
+.err{background:var(--crit-soft);color:var(--crit);border:1px solid rgba(255,61,90,.35);padding:10px 14px;border-radius:8px;margin-bottom:16px}
+.warn{background:var(--med-soft);color:var(--med);border:1px solid rgba(232,213,90,.3);padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:14px}
+.drop{border:2px dashed var(--line);border-radius:12px;padding:30px;text-align:center;background:rgba(32,212,255,.03);transition:.2s}
+.drop:hover{border-color:var(--green)}
+.drop input{margin:14px 0;color:var(--muted);max-width:100%}
+.drop input::file-selector-button{background:transparent;color:var(--cyan);border:1px solid var(--cyan);border-radius:6px;padding:6px 12px;margin-right:10px;cursor:pointer;font-family:'Cairo',sans-serif}
+dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0;font-size:14px}
+dt{color:var(--muted)} dd{margin:0;font-family:var(--mono);color:var(--ink)}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-img.cm{max-width:100%;height:auto;background:#fff;border-radius:8px}
-.filter{padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);min-width:240px}
+img.cm{max-width:100%;height:auto;background:#fff;border-radius:8px;padding:6px}
+.filter{padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);min-width:240px;font-family:var(--mono)}
+.filter:focus{outline:none;border-color:var(--green)}
+
+/* home hero */
+.hero{text-align:center;padding:26px 0 30px}
+.tag{display:inline-block;border:1px solid var(--line);padding:3px 14px;border-radius:20px;font-size:13px;color:var(--cyan);margin-bottom:14px}
+.hero h1{font-size:clamp(34px,6.5vw,64px);font-weight:900;line-height:1.15;margin:0}
+.hero h1 .g{color:var(--green);text-shadow:0 0 18px rgba(34,255,136,.6)}
+.hero .sub{color:var(--muted);font-size:clamp(15px,2.2vw,19px);margin-top:6px}
+.typed{margin-top:16px;color:var(--green);font:14px var(--mono);min-height:1.6em}
+.typed::after{content:"▋";animation:blink .8s steps(1) infinite;margin-left:3px}
+
+footer{border-top:1px solid var(--line);padding:18px 0;color:var(--muted);font:12px var(--mono);text-align:center}
+@media (prefers-reduced-motion:reduce){ #rain{display:none} .status i,.typed::after{animation:none} }
 </style>
 </head>
 <body>
+<canvas id="rain" aria-hidden="true"></canvas>
 <header><div class="wrap">
-  <div class="logo">⛨</div><h1><a href="/" style="color:inherit;text-decoration:none">NIDS Threat Console</a></h1>
-  <div class="meta">{% if card and not card.error %}{{ card.name }} · {{ card.n_classes }} classes · {{ card.n_features }} features{% endif %}</div>
+  <a class="logo" href="/">JBJ//<b>IDS</b></a>
+  <span class="status"><i></i>SYSTEMS ONLINE</span>
+  <nav>
+    <a href="https://batch5ai.lol">Home</a>
+    <a href="https://lab.batch5ai.lol">Ops Room</a>
+    <a href="https://phish.batch5ai.lol">Phishing</a>
+    <a class="on" href="/">IDS</a>
+  </nav>
+  {% if card and not card.error %}<div class="meta">model: {{ card.name }} · {{ card.n_classes }} classes · {{ card.n_features }} features</div>{% endif %}
 </div></header>
 <main><div class="wrap">
 {% block body %}{% endblock %}
 </div></main>
+<footer>JBJ//IDS · CSE-CIC-IDS2018 · MSCS640 · served from g1 (us-central1-a)</footer>
+<script>
+(function(){
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var c=document.getElementById('rain'), x=c.getContext('2d'), cols, drops, fs=15;
+  var chars='01アイウエオカキクケコサシスセソ<>/{}[]#$%=+ABCDEF';
+  function size(){c.width=innerWidth;c.height=innerHeight;cols=Math.floor(c.width/fs);drops=Array(cols).fill(0).map(function(){return Math.random()*-50;});}
+  size(); addEventListener('resize', size);
+  setInterval(function(){
+    x.fillStyle='rgba(4,7,11,.12)'; x.fillRect(0,0,c.width,c.height);
+    x.font=fs+'px JetBrains Mono, monospace';
+    for(var i=0;i<cols;i++){
+      x.fillStyle=Math.random()<.04?'#20d4ff':'#22ff88';
+      x.fillText(chars[Math.floor(Math.random()*chars.length)], i*fs, drops[i]*fs);
+      if(drops[i]*fs>c.height && Math.random()>.975) drops[i]=0;
+      drops[i]++;
+    }
+  }, 55);
+})();
+</script>
 </body>
 </html>

@@ -1,5 +1,18 @@
 {% extends "base.html" %}
 {% block body %}
+<div class="hero">
+  <div class="tag">Batch 5 · Threat Console</div>
+  <h1>JBJ <span class="g">IDS</span> Console</h1>
+  <div class="sub">Network Intrusion Detection · CSE-CIC-IDS2018 · 14 attack classes</div>
+  <div class="typed" id="typed"></div>
+</div>
+<script>
+(function(){
+  var lines=['> loading model ... ok','> classes: Benign + 13 attack types','> upload a CICFlowMeter CSV to scan','> awaiting traffic ...'], i=0, j=0, el=document.getElementById('typed');
+  (function tick(){ if(!el) return; el.textContent=lines[i].slice(0,++j);
+    if(j>=lines[i].length){ j=0; i=(i+1)%lines.length; setTimeout(tick,1600); } else setTimeout(tick,45); })();
+})();
+</script>
 {% if error %}<div class="err">{{ error }}</div>{% endif %}
 {% if card.note %}<div class="warn">Model note: {{ card.note }}</div>{% endif %}
 <div class="grid g2">
