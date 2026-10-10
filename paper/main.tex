@@ -139,9 +139,19 @@ columns (several bulk-rate and URG/PSH columns are constant), (2) rank
 features with a class-balanced Extremely Randomized Trees
 model~\cite{geurts2006} and, within every group whose pairwise $|r|>0.98$,
 keep only the highest-ranked feature, and (3) keep the top 40. Fig.~\ref{fig:imp}
-shows the resulting importances. \fillin{Comment on the top features once the
-real run has finished, e.g.\ which packet-length, window-size or IAT features
-dominate, and why that makes sense for DoS and brute-force traffic.}
+shows the resulting importances. The two top-ranked features,
+\texttt{Init Fwd Win Byts} and \texttt{Fwd Seg Size Min}, describe the initial
+TCP window and the smallest forward segment; they act as a fingerprint of the
+attacking tool's TCP stack, which a scripted flood or brute-force client keeps
+constant across thousands of flows. They are followed by rate and timing
+features (\texttt{Flow Pkts/s}, \texttt{Flow Duration}, \texttt{Flow IAT Mean},
+\texttt{Fwd IAT Max}, \texttt{Bwd Pkts/s}), which separate high-rate floods
+(Hulk, HOIC, LOIC) from low-and-slow attacks (Slowloris, SlowHTTPTest), and by
+\texttt{Dst Port}, which names the targeted service (21 for FTP, 22 for SSH, 80
+for the web attacks). The window and port features may partly reflect the
+testbed configuration rather than attack behaviour, a caveat for deployment on
+other networks that the day-held-out evaluation in Sec.~\ref{sec:conc} would
+test.
 
 \begin{figure}[t]
 \centering
@@ -185,10 +195,17 @@ by coordinate ascent over a log-spaced grid that maximises
 macro-$F_1$ only.
 
 \textbf{Hyper-parameter tuning.} \texttt{python main.py train --tune} runs a
-random search (12 trials) over the GBDT learning rate, depth, leaf count and L2
-penalty on a 150k-flow subsample, scored by validation macro-$F_1$. The
-defaults above follow common practice for tabular data. \fillin{Report the
-search outcome from \texttt{reports/results.json} (``tuning'') if you ran it.}
+random search (12 trials) over the GBDT learning rate
+$\{0.03,0.05,0.1,0.2\}$, depth $\{6,8,10,12\}$ and L2 penalty
+$\{0,0.5,1,5\}$ on a 150k-flow subsample of the rebalanced training set,
+scored by validation macro-$F_1$ (20 minutes in total). Validation macro-$F_1$
+ranged from 0.867 to 0.889. The best trial (learning rate 0.1, depth 8,
+L2~1.0) coincided with the defaults above, so retraining on the full data
+reproduced the untuned scores exactly: within this range the model is not
+sensitive to these settings, and the largest effects come from the data
+engineering and the class-bias step instead. (The search space also listed a
+leaf cap, which the XGBoost engine did not receive at the time; this has since
+been fixed, and the 12 trials were distinct in the other three settings.)
 
 \textbf{Autoencoder.} A 32-8-32 bottleneck network is trained to reconstruct
 Benign training flows only. A flow is flagged when its reconstruction error
@@ -235,13 +252,37 @@ autoencoder alone reaches an attack-vs-benign AUC of \AEAUC{}, flagging
 \label{fig:roc}
 \end{figure*}
 
-\fillin{Discussion, written from the real numbers: (1) which model wins and by
-how much over the RF baseline; (2) how much the class-bias step adds; (3)
-the confusions. Prior analyses of this dataset lead us to expect
-\emph{Infilteration} to be largely indistinguishable from Benign at the flow
-level, and \emph{Brute Force -Web}, \emph{Brute Force -XSS} and \emph{SQL
-Injection} to be confused with each other because they share a target and a
-traffic shape; check whether Fig.~\ref{fig:cm} confirms this before you state it.}
+\textbf{Models.} Gradient-boosted trees beat the Random Forest baseline
+(test macro-$F_1$ 0.849 vs 0.806), and the MLP is weakest (0.765) despite the
+longest training time, which matches the usual advantage of tree ensembles on
+tabular flow statistics. The class-bias step is the single largest gain: it
+adds 0.015 to XGBoost, 0.075 to the Random Forest and 0.076 to the MLP,
+because it moves decisions in favour of the rare classes without retraining.
+Selection on validation picks XGBoost with class bias (0.942 validation,
+0.864 test); the Random Forest with class bias scores slightly higher on test
+(0.880), but choosing it after looking at the test set would bias the
+estimate, so we report the validation choice.
+
+\textbf{Where the model fails.} Fig.~\ref{fig:cm} shows three failure modes.
+(i) Half of the \emph{Infilteration} flows (51\%) are classified Benign, and
+4\% of Benign flows are flagged as Infilteration: at the flow level an
+infiltrated host's traffic looks like ordinary browsing, which also explains
+most of the 4.5\% false-positive rate. (ii) \emph{DoS-SlowHTTPTest} and
+\emph{FTP-BruteForce} are confused with each other (60\% and 25\% of their
+test flows), as expected from the shared feature vectors found in
+Sec.~\ref{sec:sampling}. (iii) \emph{SQL Injection} spreads to Brute Force
+-Web (17\%), Brute Force -XSS (8\%) and Infilteration (17\%), since all three
+web attacks hit the same application with similar request shapes;
+Brute Force -Web and -XSS themselves are rarely confused with each other.
+All other attacks are detected almost perfectly.
+
+\textbf{Reliability of the numbers.} The test split holds only 4
+FTP-BruteForce, 5 SlowHTTPTest and 12 SQL Injection flows, so a single flow
+moves their $F_1$ by 0.1--0.25. This, rather than overfitting, is the main
+reason for the gap between validation and test macro-$F_1$. The
+autoencoder reaches an AUC of \AEAUC{} but detects only \AEDetectionRate{}
+of attacks at \AEFalsePositiveRate{} false positives, so it is useful as a
+secondary signal for unknown traffic, not as a standalone detector.
 
 % ---------------------------------------------------------------------------
 \section{Deployment}
@@ -256,7 +297,7 @@ shows live macro-$F_1$ and a confusion matrix. A JSON endpoint
 (\texttt{/api/predict}) supports integration with other tools.
 
 % ---------------------------------------------------------------------------
-\section{Conclusion and Future Work}
+\section{Conclusion and Future Work}\label{sec:conc}
 On a heavily imbalanced, artefact-laden benchmark, careful data engineering
 (de-duplication, sampling-corrected resolution of label conflicts, train-only
 rebalancing) and

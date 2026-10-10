@@ -126,7 +126,20 @@ FTP-BruteForce 0.600 (4); Infilteration 0.543; DoS SlowHTTPTest 0.500 (5).
 - Deployed at https://ids.batch5ai.lol: the XGBoost bundle is 12 MB (RF was 30 MB), uses
   ~345 MB of RAM on the VM (RF ~450 MB) and scores the 5,000-flow demo sample in 2.3 s (10.3 s).
 
+## Run 4 - 2026-10-10, hyper-parameter search (`main.py train --tune`)
+
+Random search, 12 trials, XGBoost on a 150k-flow subsample of the rebalanced training set,
+scored by validation macro-F1 (1,177 s in total). Validation macro-F1 ranged 0.8674-0.8887.
+Best: learning rate 0.1, depth 8, L2 1.0 - identical to the defaults, so the retrained models
+reproduced run 3 to four decimals (best: XGBoost + class bias, test macro-F1 0.8640). The
+deployed model is therefore unchanged.
+
+The space also varied `max_leaf_nodes`, which the XGBoost engine did not receive at the time
+(fixed in `f2a614e`, config default set to null = no limit, as in all reported runs); the 12
+trials were still distinct in learning rate, depth and L2.
+
 ## Next
 
-- Paper: Methodology, Results and Conclusion from runs 2-3; AI-use statement.
+- Paper: only Mesalam's sentence in the AI-use statement is left; compile to PDF and check the
+  4-page limit.
 - Deploy the dashboard at `https://ids.batch5ai.lol` (DNS record already points to the VM).
