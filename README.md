@@ -110,7 +110,7 @@ tar -czf code.tar.gz nids webapp main.py configs deploy requirements.txt
 bash /tmp/nids/setup_server.sh ids.example.com you@example.com
 ```
 
-The dashboard holds about 450 MB of RAM with the Random Forest bundle loaded; on the demo VM the
+The dashboard holds about 350 MB of RAM with the ten-day XGBoost bundle loaded (450 MB with the Random Forest one); on the demo VM the
 upload limit is 50 MB.
 
 ![Threat report, rendered here with the synthetic smoke-test model](docs/dashboard_report.png)

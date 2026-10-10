@@ -1,7 +1,7 @@
 # Contributing
 
-Team: **Mohammed Amer** ([@maljabriii12-design](https://github.com/maljabriii12-design)) and
-**Muslim** ([@malnabit](https://github.com/malnabit)). The course requires that both members
+Team: **Mohammed Amer Al-Jabri** ([@maljabriii12-design](https://github.com/maljabriii12-design)) and
+**Mesalam Abdullah Al-Nabit** ([@malnabit](https://github.com/malnabit)). The course requires that both members
 commit to this repository, so each of us pushes our own work from our own machine.
 
 ## 1. One-time setup (Windows)
@@ -41,9 +41,9 @@ clone and run this repository, and reproducibility is 15% of the grade.
 |---|---|
 | Data pipeline, models, training on the real dataset | Mohammed |
 | Deployment of the dashboard (live URL) | Mohammed |
-| Reproducibility check on a second machine, README fixes | Muslim |
-| Paper: Introduction and Related Work | Muslim |
-| Dashboard UI improvements (`webapp/templates/`) | Muslim |
+| Reproducibility check on a second machine, README fixes | Mesalam |
+| Paper: Introduction and Related Work | Mesalam |
+| Dashboard UI improvements (`webapp/templates/`) | Mesalam |
 | Paper: Methodology, Results, Conclusion | Mohammed |
 | Demo-day slides and talk | Both |
 

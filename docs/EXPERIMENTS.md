@@ -92,7 +92,41 @@ Benign 0.941; **DoS SlowHTTPTest 0.909 (5)**; SQL Injection 0.696 (12); **FTP-Br
 - Model selection is done on validation macro-F1, so the reported best model (RF + class bias)
   is not the one with the highest 12-class test score; this is the intended, unbiased choice.
 
+## Run 3 - 2026-10-10, all ten days, `ambiguous_policy = majority` (final, deployed)
+
+Adds `Thuesday-20-02-2018` (3.9 GB, `DDoS attacks-LOIC-HTTP`), so all 15 labels are present.
+De-duplication: 2,537,395 -> 1,589,555 rows (511,975 exact duplicates; 20,769 ambiguous vectors,
+one copy kept each). Split 1,112,687 / 238,434 / 238,434. LOIC-HTTP contributes 140,292
+training flows.
+
+| Model | Test macro-F1 (15 classes) |
+|---|---|
+| Random Forest | 0.8055 |
+| XGBoost | 0.8492 |
+| MLP (early-stopped at 24 epochs) | 0.7649 |
+| **XGBoost + class bias (best on validation, val 0.942)** | **0.8640** |
+
+Best model: accuracy 0.9372, balanced accuracy 0.8715, macro ROC-AUC (OvR) 0.9943; binary
+detection rate 0.9164, false-positive rate 0.0450 (down from 0.0649 in run 2).
+
+Per-class test F1 (support): DDoS LOIC-HTTP 1.000 (30,063); Bot, DDOS HOIC, DoS GoldenEye,
+DoS Hulk, DoS Slowloris, SSH-Bruteforce 1.000; DDOS LOIC-UDP 0.947; Benign 0.943;
+Brute Force -XSS 0.943 (34); Brute Force -Web 0.849 (82); SQL Injection 0.636 (12);
+FTP-BruteForce 0.600 (4); Infilteration 0.543; DoS SlowHTTPTest 0.500 (5).
+
+### Run 2 vs run 3
+
+- On a 15-class test, the run-2 model scores 0 on LOIC-HTTP, capping it at about
+  0.881 x 14/15 = 0.82; run 3 reaches 0.864.
+- On the 14 classes both share, run 3 scores 0.854 vs 0.881. The difference sits in the tiny
+  classes (SlowHTTPTest 5 test flows, FTP 4, SQL Injection 12), where one flow moves F1 by
+  0.1-0.25, so the two runs are within noise there; large classes are equal or better
+  (Brute Force -Web 0.597 -> 0.849, Benign false positives 6.5% -> 4.5%).
+- The validation/test gap (0.942 vs 0.864) has the same cause.
+- Deployed at https://ids.batch5ai.lol: the XGBoost bundle is 12 MB (RF was 30 MB), uses
+  ~345 MB of RAM on the VM (RF ~450 MB) and scores the 5,000-flow demo sample in 2.3 s (10.3 s).
+
 ## Next
 
-- Optionally add `Thuesday-20-02-2018` for `DDoS attacks-LOIC-HTTP`.
+- Paper: Methodology, Results and Conclusion from runs 2-3; AI-use statement.
 - Deploy the dashboard at `https://ids.batch5ai.lol` (DNS record already points to the VM).
