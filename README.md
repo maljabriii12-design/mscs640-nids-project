@@ -1,5 +1,8 @@
 # Network Intrusion Detection on CSE-CIC-IDS2018
 
+> **مسلم: تعليماتك ومهامك هنا ← [CONTRIBUTING.md](CONTRIBUTING.md)** (ملخص بالعربي في أول الملف، والمهام في القسم 3).
+> **Mesalam: your tasks are in [CONTRIBUTING.md](CONTRIBUTING.md), Section 3.**
+
 MSCS 640 project: a three-phase pipeline that goes from the raw CICFlowMeter
 CSVs to a deployed SOC threat-detection dashboard.
 
