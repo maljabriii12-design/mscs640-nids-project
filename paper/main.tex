@@ -177,11 +177,10 @@ experiences.
 \textbf{Random Forest} (baseline)~\cite{breiman2001}: 100 trees,
 $\sqrt{d}$ features per split, 25\% bootstrap samples, depth $\le 25$, at
 least 3 samples per leaf (a deliberate cap on model size and memory).
-\textbf{Gradient-boosted trees}: XGBoost~\cite{chen2016} with histogram split
-finding when it is available, otherwise scikit-learn's histogram GBDT, which
-uses the same LightGBM-style binning~\cite{ke2017}. Learning rate 0.1, depth
-8, L2 penalty 1, and up to 600 rounds with early stopping on validation log
-loss. \textbf{MLP}: three ReLU layers (256-128-64), Adam~\cite{kingma2015},
+\textbf{Gradient-boosted trees}: XGBoost~\cite{chen2016} with histogram
+splits (scikit-learn's LightGBM-style histogram GBDT~\cite{ke2017} as a
+fallback); learning rate 0.1, depth 8, L2 penalty 1, up to 600 rounds with
+early stopping on validation log loss. \textbf{MLP}: three ReLU layers (256-128-64), Adam~\cite{kingma2015},
 batch size 1024, L2 penalty $10^{-4}$, early stopping, and the class weights
 above applied to the cross-entropy loss. \textbf{Ensemble}: the average of the
 three models' class probabilities. All models use
@@ -247,7 +246,7 @@ autoencoder alone reaches an attack-vs-benign AUC of \AEAUC{}, flagging
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=0.82\textwidth]{roc_curves}
+\includegraphics[width=0.66\textwidth]{roc_curves}
 \caption{Test ROC curves (log-scaled FPR): one-vs-rest per class (left) and attack-vs-benign (right).}
 \label{fig:roc}
 \end{figure*}
@@ -286,15 +285,11 @@ secondary signal for unknown traffic, not as a standalone detector.
 
 % ---------------------------------------------------------------------------
 \section{Deployment}
-\texttt{python main.py serve} starts a Flask dashboard. An analyst uploads a
-CICFlowMeter CSV, and the frozen bundle (preprocessor, selected model, label
-map, autoencoder) scores every flow. The threat report shows the number of
-malicious flows, the attack mix with severities, the most-targeted hosts and
-ports, and a filterable triage table sorted by severity and confidence. It
-also flags flows that are anomalous yet classified Benign, which a purely
-supervised model would miss. When the upload carries labels, the report also
-shows live macro-$F_1$ and a confusion matrix. A JSON endpoint
-(\texttt{/api/predict}) supports integration with other tools.
+A Flask dashboard (\url{https://ids.batch5ai.lol}) scores an uploaded
+CICFlowMeter CSV with the frozen bundle and returns a threat report: attack
+mix and severities, most-targeted hosts and ports, a triage table, flows that
+are anomalous yet classified Benign, and live metrics when labels are present.
+It runs on a 1~GB cloud VM and scores 5{,}000 flows in about 2~s.
 
 % ---------------------------------------------------------------------------
 \section{Conclusion and Future Work}\label{sec:conc}
