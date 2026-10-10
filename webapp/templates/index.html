@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block body %}
+{% if error %}<div class="err">{{ error }}</div>{% endif %}
+{% if card.note %}<div class="warn">Model note: {{ card.note }}</div>{% endif %}
+<div class="grid g2">
+  <div class="panel">
+    <h2>Analyse network traffic</h2>
+    <p class="muted small">Upload a CICFlowMeter CSV with the same columns as CSE-CIC-IDS2018. A <code>Label</code> column is optional; if it is present, the report also scores the model against it.</p>
+    <form class="drop" action="/analyze" method="post" enctype="multipart/form-data">
+      <div><strong>Select a .csv file</strong></div>
+      <input type="file" name="file" accept=".csv,text/csv" required>
+      <div><button class="btn" type="submit">Generate threat report</button></div>
+    </form>
+    {% if demo %}
+    <form action="/demo" method="post" style="margin-top:14px">
+      <button class="btn ghost" type="submit">Or run on the bundled held-out test sample</button>
+    </form>
+    {% endif %}
+  </div>
+  <div class="panel">
+    <h2>Deployed model</h2>
+    {% if card.error %}
+      <div class="err">{{ card.error }}</div>
+    {% else %}
+    <dl>
+      <dt>Model</dt><dd>{{ card.name }}</dd>
+      <dt>Trained</dt><dd>{{ card.created }}</dd>
+      <dt>Test macro-F1</dt><dd>{{ "%.4f"|format(card.macro_f1) }}</dd>
+      <dt>Test accuracy</dt><dd>{{ "%.4f"|format(card.accuracy) }}</dd>
+      <dt>Features used</dt><dd>{{ card.n_features }}</dd>
+      <dt>Anomaly detector</dt><dd>{{ "Autoencoder (benign-only)" if card.has_ae else "off" }}</dd>
+    </dl>
+    <p class="muted small" style="margin-top:14px">The supervised model names the attack type. The autoencoder flags flows that look unlike normal traffic, even when they match no known class.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

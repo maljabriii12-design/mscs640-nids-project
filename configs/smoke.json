@@ -1,0 +1,20 @@
+{
+  "data_note": "SYNTHETIC smoke-test data - not real traffic, do not report",
+  "paths": {
+    "raw_dir": "data/raw/synthetic",
+    "processed": "data/processed/smoke_sample.pkl",
+    "model_dir": "models/smoke",
+    "report_dir": "reports/smoke",
+    "paper_generated": "reports/smoke/generated",
+    "paper_figures": "reports/smoke/figures"
+  },
+  "data": {"chunksize": 20000, "cap_benign": 40000, "cap_attack": 3000},
+  "imbalance": {"smote_target": 1500, "benign_train_cap": 20000},
+  "models": {
+    "random_forest": {"n_estimators": 60},
+    "gbdt": {"n_estimators": 150},
+    "mlp": {"hidden_layer_sizes": [64, 32], "max_iter": 15},
+    "autoencoder": {"max_iter": 10, "benign_fit_rows": 20000}
+  },
+  "tuning": {"n_iter": 3, "subsample": 20000}
+}

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Threat report · {{ r.filename }}{% endblock %}
+{% block body %}
+<div class="row" style="justify-content:space-between;margin-bottom:16px">
+  <div><h2 style="margin:0">Threat report</h2>
+    <div class="muted small">{{ r.filename }} · {{ "{:,}".format(r.n_flows) }} flows scored in {{ "%.1f"|format(r.seconds) }} s</div></div>
+  <div class="row">
+    <a class="btn ghost" href="/report/{{ rid }}.csv?only=malicious">Download malicious flows</a>
+    <a class="btn ghost" href="/report/{{ rid }}.csv">Download all predictions</a>
+    <a class="btn" href="/">New upload</a>
+  </div>
+</div>
+{% if card.note %}<div class="warn">Model note: {{ card.note }}</div>{% endif %}
+
+<div class="grid g4">
+  <div class="panel kpi"><div class="v">{{ "{:,}".format(r.n_flows) }}</div><div class="l">flows analysed</div></div>
+  <div class="panel kpi {{ 'crit' if r.n_malicious else 'ok' }}"><div class="v">{{ "{:,}".format(r.n_malicious) }}</div><div class="l">malicious ({{ "%.2f"|format(r.pct_malicious) }}%)</div></div>
+  <div class="panel kpi {{ 'crit' if r.n_critical else '' }}"><div class="v">{{ "{:,}".format(r.n_critical) }}</div><div class="l">critical severity (Bot, Infiltration, SQLi)</div></div>
+  <div class="panel kpi">{% if r.has_anomaly %}<div class="v">{{ "{:,}".format(r.n_anomalous_only) }}</div><div class="l">anomalous but classified Benign (review)</div>{% else %}<div class="v">{{ "{:,}".format(r.n_high) }}</div><div class="l">high severity</div>{% endif %}</div>
+</div>
+
+<div class="grid g2" style="margin-top:16px">
+  <div class="panel">
+    <h2>Detected attack types</h2>
+    {% for k, v, w in r.class_bars %}
+      <div class="bar"><span class="k" title="{{ k }}">{{ k }}</span><span class="t"><i style="width:{{ w }}%"></i></span><span class="n">{{ "{:,}".format(v) }}</span></div>
+    {% else %}<p class="muted">No malicious flows detected.</p>{% endfor %}
+    <div class="row" style="margin-top:14px">
+      {% for s, n in r.severity %}<span class="pill {{ s }}">{{ s }}: {{ "{:,}".format(n) }}</span>{% endfor %}
+    </div>
+  </div>
+  <div class="panel">
+    <h2>Most targeted</h2>
+    {% set groups = [("Destination IP", r.top_dst_ip), ("Source IP", r.top_src_ip), ("Destination port", r.top_dst_port)] %}
+    {% for title, items in groups if items %}
+      <div class="muted small" style="margin-top:6px">{{ title }}</div>
+      {% for k, v, w in items %}
+        <div class="bar"><span class="k num">{{ k }}</span><span class="t"><i style="width:{{ w }}%"></i></span><span class="n">{{ "{:,}".format(v) }}</span></div>
+      {% endfor %}
+    {% else %}<p class="muted">No host or port columns in this upload.</p>{% endfor %}
+  </div>
+</div>
+
+{% if r.has_truth %}
+<div class="grid g2" style="margin-top:16px">
+  <div class="panel">
+    <h2>Evaluation against the uploaded labels</h2>
+    <div class="grid g2">
+      <div class="kpi"><div class="v">{{ "%.4f"|format(r.eval.macro_f1) }}</div><div class="l">macro-F1</div></div>
+      <div class="kpi"><div class="v">{{ "%.4f"|format(r.eval.accuracy) }}</div><div class="l">accuracy</div></div>
+      <div class="kpi"><div class="v">{{ "%.2f"|format(100*r.eval.detection_rate) }}%</div><div class="l">attack detection rate</div></div>
+      <div class="kpi"><div class="v">{{ "%.3f"|format(100*r.eval.fpr) }}%</div><div class="l">false-positive rate on Benign</div></div>
+    </div>
+  </div>
+  <div class="panel"><h2>Confusion matrix (counts)</h2><img class="cm" alt="confusion matrix" src="data:image/png;base64,{{ r.confusion_png }}"></div>
+</div>
+{% endif %}
+
+<div class="panel" style="margin-top:16px">
+  <div class="row" style="justify-content:space-between;margin-bottom:10px">
+    <h2 style="margin:0">Malicious flows, by severity and confidence</h2>
+    <input class="filter" id="q" placeholder="Filter (IP, port, attack type…)" oninput="filt()">
+  </div>
+  {% if r.table %}
+  <div class="scroll"><table id="tbl">
+    <thead><tr>{% for c in r.table_cols %}<th>{{ c }}</th>{% endfor %}</tr></thead>
+    <tbody>
+    {% for row in r.table %}<tr>
+      {% for c in r.table_cols %}
+        {% if c == "Severity" %}<td><span class="pill {{ row[c] }}">{{ row[c] }}</span></td>
+        {% elif c in ("Confidence", "P(attack)", "Anomaly score") %}<td class="num">{{ "%.4f"|format(row[c]) }}</td>
+        {% else %}<td>{{ row[c] }}</td>{% endif %}
+      {% endfor %}
+    </tr>{% endfor %}
+    </tbody></table></div>
+  {% if r.table_truncated %}<p class="muted small">Showing the top 500. Download the CSV for the full list.</p>{% endif %}
+  {% else %}<p class="muted">Nothing to triage.</p>{% endif %}
+</div>
+<script>
+function filt(){const q=document.getElementById('q').value.toLowerCase();
+ document.querySelectorAll('#tbl tbody tr').forEach(tr=>{tr.style.display=tr.textContent.toLowerCase().includes(q)?'':'none'});}
+</script>
+{% endblock %}

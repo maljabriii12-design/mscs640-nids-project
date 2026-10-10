@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}NIDS Threat Console{% endblock %}</title>
+<style>
+:root{
+  --bg:#f5f6f8; --panel:#ffffff; --ink:#151a22; --muted:#5b6575; --line:#e3e6eb;
+  --accent:#2457d6; --accent-soft:#e8eefc;
+  --crit:#b3261e; --crit-soft:#fbe9e7; --high:#c25e00; --high-soft:#fff1e3;
+  --med:#8a6d00; --med-soft:#fdf7dc; --ok:#1d7a46; --ok-soft:#e5f5ec;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#0e1117; --panel:#161b24; --ink:#e7eaf0; --muted:#97a1b3; --line:#283041;
+  --accent:#7aa2ff; --accent-soft:#1c2740;
+  --crit:#ff8a80; --crit-soft:#3a1714; --high:#ffb36b; --high-soft:#3a2510;
+  --med:#e8cf5a; --med-soft:#332c0e; --ok:#6fd49a; --ok-soft:#10301f;
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:var(--panel);border-bottom:1px solid var(--line)}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+header .wrap{display:flex;align-items:center;gap:14px;height:58px}
+.logo{width:28px;height:28px;border-radius:7px;background:var(--accent);display:grid;place-items:center;color:#fff;font-weight:700}
+header h1{font-size:17px;margin:0;font-weight:650}
+header .meta{margin-left:auto;color:var(--muted);font-size:13px}
+main{padding:26px 0 60px}
+h2{font-size:15px;margin:0 0 12px;font-weight:650}
+.grid{display:grid;gap:16px}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:860px){.g4,.g3,.g2{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.g4,.g3,.g2{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+.kpi .v{font-size:28px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kpi .l{color:var(--muted);font-size:13px}
+.kpi.crit .v{color:var(--crit)} .kpi.ok .v{color:var(--ok)}
+.bar{display:grid;grid-template-columns:minmax(120px,210px) 1fr 64px;gap:10px;align-items:center;font-size:13px;margin:6px 0}
+.bar .t{height:10px;background:var(--accent-soft);border-radius:5px;overflow:hidden}
+.bar .t i{display:block;height:100%;background:var(--accent);border-radius:5px}
+.bar .n{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.bar .k{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:600}
+.Critical{background:var(--crit-soft);color:var(--crit)}
+.High{background:var(--high-soft);color:var(--high)}
+.Medium{background:var(--med-soft);color:var(--med)}
+.None{background:var(--ok-soft);color:var(--ok)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{color:var(--muted);font-weight:600;position:sticky;top:0;background:var(--panel)}
+td.num{font-family:var(--mono);font-size:12px}
+.scroll{max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--accent);background:var(--accent);color:#fff;padding:9px 16px;border-radius:8px;font-weight:600;cursor:pointer;text-decoration:none;font-size:14px}
+.btn.ghost{background:transparent;color:var(--accent)}
+.muted{color:var(--muted)} .small{font-size:13px}
+.err{background:var(--crit-soft);color:var(--crit);padding:10px 14px;border-radius:8px;margin-bottom:16px}
+.warn{background:var(--med-soft);color:var(--med);padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:14px}
+.drop{border:2px dashed var(--line);border-radius:12px;padding:34px;text-align:center}
+.drop input{margin:14px 0}
+dl{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;margin:0;font-size:14px}
+dt{color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+img.cm{max-width:100%;height:auto;background:#fff;border-radius:8px}
+.filter{padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);min-width:240px}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="logo">⛨</div><h1><a href="/" style="color:inherit;text-decoration:none">NIDS Threat Console</a></h1>
+  <div class="meta">{% if card and not card.error %}{{ card.name }} · {{ card.n_classes }} classes · {{ card.n_features }} features{% endif %}</div>
+</div></header>
+<main><div class="wrap">
+{% block body %}{% endblock %}
+</div></main>
+</body>
+</html>

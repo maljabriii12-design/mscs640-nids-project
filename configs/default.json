@@ -1,0 +1,89 @@
+{
+  "seed": 42,
+  "paths": {
+    "raw_dir": "data/raw",
+    "processed": "data/processed/flows_sample.pkl",
+    "model_dir": "models",
+    "report_dir": "reports",
+    "paper_generated": "paper/generated",
+    "paper_figures": "paper/figures"
+  },
+  "data": {
+    "file_glob": "*TrafficForML_CICFlowMeter.csv",
+    "chunksize": 250000,
+    "cap_benign": 1000000,
+    "cap_attack": 200000,
+    "drop_duplicates": true,
+    "keep_dst_port": true,
+    "test_size": 0.15,
+    "val_size": 0.15
+  },
+  "features": {
+    "variance_threshold": 0.0,
+    "correlation_threshold": 0.98,
+    "top_k": 40,
+    "clip_quantile": 0.9999
+  },
+  "imbalance": {
+    "strategy": "smote+weights",
+    "smote_target": 20000,
+    "smote_k": 5,
+    "benign_train_cap": 600000,
+    "weight_power": 0.5
+  },
+  "models": {
+    "random_forest": {
+      "enabled": true,
+      "n_estimators": 100,
+      "max_depth": 25,
+      "min_samples_leaf": 3,
+      "max_features": "sqrt",
+      "max_samples": 0.25
+    },
+    "gbdt": {
+      "enabled": true,
+      "engine": "auto",
+      "n_estimators": 600,
+      "learning_rate": 0.1,
+      "max_depth": 8,
+      "max_leaf_nodes": 63,
+      "l2_regularization": 1.0,
+      "early_stopping_rounds": 30
+    },
+    "mlp": {
+      "enabled": true,
+      "hidden_layer_sizes": [
+        256,
+        128,
+        64
+      ],
+      "alpha": 0.0001,
+      "batch_size": 1024,
+      "learning_rate_init": 0.001,
+      "max_iter": 40,
+      "n_iter_no_change": 5
+    },
+    "autoencoder": {
+      "enabled": true,
+      "hidden_layer_sizes": [
+        32,
+        8,
+        32
+      ],
+      "max_iter": 30,
+      "benign_fit_rows": 200000,
+      "threshold_quantile": 0.99
+    },
+    "ensemble": {
+      "enabled": true
+    }
+  },
+  "tuning": {
+    "enabled": false,
+    "n_iter": 12,
+    "subsample": 150000
+  },
+  "decision": {
+    "class_bias_tuning": true
+  }
+}
