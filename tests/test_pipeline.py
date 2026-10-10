@@ -79,6 +79,22 @@ class TestImbalance(unittest.TestCase):
         self.assertAlmostEqual(w[1] / w[0], 9.0, places=5)
 
 
+class TestModels(unittest.TestCase):
+    def test_gbdt_leaf_cap_reaches_xgboost(self):
+        from nids import models
+        if not models.HAS_XGB:
+            self.skipTest("xgboost not installed")
+        rng = np.random.default_rng(0)
+        X = rng.normal(size=(200, 4)).astype(np.float32)
+        y = rng.integers(0, 3, 200)
+        p = {"engine": "xgboost", "n_estimators": 5, "learning_rate": 0.1, "max_depth": 4,
+             "l2_regularization": 1.0, "early_stopping_rounds": 2, "max_leaf_nodes": 7}
+        m = models.fit_gbdt(p, X, y, None, X, y, 0)
+        self.assertEqual(m.get_params()["max_leaves"], 7)
+        m = models.fit_gbdt({**p, "max_leaf_nodes": None}, X, y, None, X, y, 0)
+        self.assertEqual(m.get_params()["max_leaves"], 0)   # null = no limit, as in the reported runs
+
+
 class TestEndToEnd(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

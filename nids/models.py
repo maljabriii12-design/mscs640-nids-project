@@ -59,9 +59,12 @@ def fit_gbdt(p, X, y, w, Xv, yv, seed):
         # XGBoost switches to a binary objective when y has two classes, and
         # "mlogloss" then fails; pick the matching eval metric.
         eval_metric = "logloss" if len(np.unique(y)) == 2 else "mlogloss"
+        # XGBoost calls the leaf cap max_leaves (0 = no limit); before this mapping the
+        # setting was silently ignored, so null in the config keeps earlier runs reproducible.
+        max_leaves = p.get("max_leaf_nodes") or 0
         model = xgb.XGBClassifier(
             n_estimators=p["n_estimators"], learning_rate=p["learning_rate"],
-            max_depth=p["max_depth"], reg_lambda=p["l2_regularization"],
+            max_depth=p["max_depth"], max_leaves=max_leaves, reg_lambda=p["l2_regularization"],
             tree_method="hist", eval_metric=eval_metric, early_stopping_rounds=p["early_stopping_rounds"],
             subsample=0.8, colsample_bytree=0.8, n_jobs=-1, random_state=seed)
         model.fit(X, y, sample_weight=w, eval_set=[(Xv, yv)], verbose=False)
