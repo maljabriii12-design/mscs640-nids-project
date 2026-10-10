@@ -2,12 +2,13 @@
 \toprule
 Model & Val $F_1^{M}$ & Test $F_1^{M}$ & Test $F_1^{W}$ & Test Acc. & Train (s) \\
 \midrule
-Random Forest & 0.6932 & 0.6985 & 0.7808 & 0.8076 & 6 \\
-XGBoost & 0.6981 & 0.7021 & 0.7812 & 0.8041 & 6 \\
-MLP & 0.6615 & 0.6649 & 0.7601 & 0.7965 & 181 \\
-Soft-vote ensemble & 0.6902 & 0.6957 & 0.7802 & 0.8097 & 193 \\
-Random Forest + class bias & 0.6968 & 0.7019 & 0.7782 & 0.7967 & 6 \\
-MLP + class bias & 0.6629 & 0.6682 & 0.7606 & 0.7932 & 181 \\
-Soft-vote ensemble + class bias $\star$ & 0.6983 & 0.7038 & 0.7821 & 0.8043 & 193 \\
+Random Forest & 0.8174 & 0.8138 & 0.9270 & 0.9255 & 23 \\
+XGBoost & 0.8495 & 0.8338 & 0.9258 & 0.9225 & 584 \\
+MLP & 0.7888 & 0.7766 & 0.9185 & 0.9176 & 2691 \\
+Soft-vote ensemble & 0.8480 & 0.8259 & 0.9278 & 0.9270 & 3298 \\
+Random Forest + class bias $\star$ & 0.8948 & 0.8814 & 0.9274 & 0.9260 & 23 \\
+XGBoost + class bias & 0.8632 & 0.8532 & 0.9261 & 0.9228 & 584 \\
+MLP + class bias & 0.8408 & 0.8366 & 0.9209 & 0.9261 & 2691 \\
+Soft-vote ensemble + class bias & 0.8891 & 0.8499 & 0.9284 & 0.9302 & 3298 \\
 \bottomrule
 \end{tabular}
