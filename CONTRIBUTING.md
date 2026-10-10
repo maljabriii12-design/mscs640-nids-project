@@ -50,7 +50,7 @@ Results discussion and Conclusion are Mohammed's and will be finished after the 
 | # | Task | Files | Definition of done |
 |---|---|---|---|
 | M1 | **Reproducibility check** on your own Windows machine (15% of the grade: the TA will do exactly this) | `README.md`, new `docs/REPRODUCIBILITY.md` | Section 2 runs end to end on a fresh clone. Record in `docs/REPRODUCIBILITY.md` your OS, Python version, the time each step took and the `pytest` result. Fix any README step that was wrong or unclear. Commit and push. |
-| M2 | **Introduction and Related Work** of the paper | `paper/main.tex` (section `Introduction`), `paper/references.bib` | The existing text is reviewed and improved in your own words. Every `\cite{}` points to a real paper that you opened and that supports the sentence. You may add 2-4 more references on ML-based intrusion detection on CSE-CIC-IDS2018 (e.g. deep learning or boosting studies), each checked the same way. Do not change other sections or any number. |
+| M2 | **Introduction and Related Work** of the paper | `paper/main.tex` (section `Introduction`), `paper/references.bib` | The existing text is reviewed and improved in your own words. Every `\cite{}` points to a real paper that you opened and that supports the sentence. You may add 2-4 more references on ML-based intrusion detection on CSE-CIC-IDS2018 (e.g. deep learning or boosting studies), each checked the same way. Do not change other sections or any number. **Space budget:** the paper is exactly 4 pages (checked on Overleaf); you have about a quarter of a column (~12 lines) to spare, references included, so cut elsewhere in the Introduction if you add more. |
 | M3 | **Your part of the AI-use statement** | `paper/main.tex` (section `Statement on the Use of AI Tools`) | Replace the red `\fillin{M.~A.~Al-Nabit: ...}` with one or two true sentences about how you used AI tools (or that you did not). |
 | M4 | *(optional)* **Dashboard improvement** | `webapp/templates/` | One visible improvement, e.g. a severity doughnut chart or an "About this project" panel. Must keep `python -m pytest -q` green, keep the JBJ dark style, and give every new text both languages (see Section 5). Tell Mohammed before pushing; he redeploys the server. |
 | M5 | **Demo-day slides** (with Mohammed) | shared deck (not in the repo) | Your half: problem, dataset, related work and the live demo walk-through. |
@@ -105,8 +105,9 @@ Rules you must follow:
 2. Never invent a reference, a number or a result. For any citation you suggest, give the
    full title, authors, venue, year and DOI or URL so I can open and verify it myself; mark
    anything you are not sure exists as UNVERIFIED.
-3. Write paper text in clear academic English, in IEEE style, in my voice; keep the
-   Introduction and Related Work to about one column in total (the paper is 4 pages).
+3. Write paper text in clear academic English, in IEEE style, in my voice. The paper is
+   exactly 4 pages with only ~12 lines to spare (new references included), so keep the
+   Introduction and Related Work to about one column and cut as much as you add.
 4. Run `python -m pytest -q` before suggesting a commit; it must pass.
 5. Do not commit or push for me; show me the diff and the commit message, I will commit with
    my own GitHub account (malnabit).
