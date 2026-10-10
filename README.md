@@ -9,7 +9,7 @@ CSVs to a deployed SOC threat-detection dashboard.
 | 2. Models | Random Forest baseline, XGBoost (falls back to scikit-learn's histogram GBDT), MLP, soft-voting ensemble, validation-tuned class-bias decision rule, benign-only autoencoder; macro-F1 model selection | `nids/models.py`, `nids/pipeline.py`, `nids/evaluate.py` |
 | 3. Deployment | Flask dashboard: upload a CSV, get a threat report (severity triage, attack mix, top targets, anomaly flags, live metrics if labels are present), CSV export, JSON API | `webapp/` |
 
-**Live demo: <https://ids.batch5ai.lol>** - click "Or run on the bundled held-out test sample" or upload a CICFlowMeter
+**Live demo: <https://ids.batch5ai.lol>** (Arabic by default; <https://ids.batch5ai.lol/?lang=en> opens it in English) - click "Or run on the bundled held-out test sample" or upload a CICFlowMeter
 CSV (up to 50 MB on the demo server). Results of the final model are in
 [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md).
 

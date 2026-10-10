@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% block title %}JBJ IDS | Threat Console{% endblock %}</title>
+<script>try{var l=localStorage.getItem('jbj-lang')||'ar';}catch(e){var l='ar';}var q=new URLSearchParams(location.search).get('lang');if(q==='ar'||q==='en'){l=q;}document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr';</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -32,7 +33,7 @@ header .wrap{display:flex;align-items:center;gap:18px;min-height:62px;flex-wrap:
 .status{display:inline-flex;align-items:center;gap:8px;font:12px var(--mono);color:var(--green)}
 .status i{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);animation:blink 1.4s infinite}
 @keyframes blink{50%{opacity:.25}}
-nav{margin-left:auto;display:flex;gap:18px;flex-wrap:wrap}
+nav{margin-inline-start:auto;display:flex;gap:18px;flex-wrap:wrap;align-items:center}
 nav a{color:var(--muted);text-decoration:none;font-size:14px;transition:.2s}
 nav a:hover,nav a.on{color:var(--green)}
 .meta{width:100%;font:12px var(--mono);color:var(--muted);padding-bottom:8px;margin-top:-6px}
@@ -43,7 +44,7 @@ h2::before{content:"> ";color:var(--green)}
 .grid{display:grid;gap:16px}
 .grid>*{min-width:0}
 dd,.meta,.muted{overflow-wrap:anywhere}
-@media (max-width:560px){ nav{margin-left:0;width:100%} .bar{grid-template-columns:minmax(90px,140px) 1fr 48px} }
+@media (max-width:560px){ nav{margin-inline-start:0;width:100%} .bar{grid-template-columns:minmax(90px,140px) 1fr 48px} }
 .g4{grid-template-columns:repeat(4,minmax(0,1fr))}
 .g2{grid-template-columns:repeat(2,minmax(0,1fr))}
 .g3{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -56,7 +57,7 @@ dd,.meta,.muted{overflow-wrap:anywhere}
 .bar{display:grid;grid-template-columns:minmax(120px,210px) 1fr 64px;gap:10px;align-items:center;font-size:13px;margin:6px 0}
 .bar .t{height:9px;background:rgba(32,212,255,.08);border-radius:5px;overflow:hidden}
 .bar .t i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:5px;box-shadow:0 0 10px rgba(34,255,136,.5)}
-.bar .n{text-align:right;font-family:var(--mono);color:var(--muted)}
+.bar .n{text-align:end;font-family:var(--mono);color:var(--muted)}
 .bar .k{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pill{display:inline-block;padding:1px 9px;border-radius:999px;font:600 12px var(--mono);border:1px solid currentColor}
 .Critical{background:var(--crit-soft);color:var(--crit)}
@@ -79,7 +80,7 @@ td.num{font-family:var(--mono);font-size:12px}
 .drop{border:2px dashed var(--line);border-radius:12px;padding:30px;text-align:center;background:rgba(32,212,255,.03);transition:.2s}
 .drop:hover{border-color:var(--green)}
 .drop input{margin:14px 0;color:var(--muted);max-width:100%}
-.drop input::file-selector-button{background:transparent;color:var(--cyan);border:1px solid var(--cyan);border-radius:6px;padding:6px 12px;margin-right:10px;cursor:pointer;font-family:'Cairo',sans-serif}
+.drop input::file-selector-button{background:transparent;color:var(--cyan);border:1px solid var(--cyan);border-radius:6px;padding:6px 12px;margin-inline-end:10px;cursor:pointer;font-family:'Cairo',sans-serif}
 dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0;font-size:14px}
 dt{color:var(--muted)} dd{margin:0;font-family:var(--mono);color:var(--ink)}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
@@ -94,8 +95,15 @@ img.cm{max-width:100%;height:auto;background:#fff;border-radius:8px;padding:6px}
 .hero h1 .g{color:var(--green);text-shadow:0 0 18px rgba(34,255,136,.6)}
 .hero .sub{color:var(--muted);font-size:clamp(15px,2.2vw,19px);margin-top:6px}
 .typed{margin-top:16px;color:var(--green);font:14px var(--mono);min-height:1.6em}
-.typed::after{content:"▋";animation:blink .8s steps(1) infinite;margin-left:3px}
+.typed::after{content:"▋";animation:blink .8s steps(1) infinite;margin-inline-start:3px}
 
+.lang{border:1px solid var(--green);color:var(--green);background:transparent;border-radius:6px;padding:2px 10px;font:700 13px var(--mono);cursor:pointer}
+.lang:hover{background:var(--accent-soft)}
+.scroll,.typed,code,.logo,.status,.meta,footer,.num,td{direction:ltr}
+html[lang=ar] [data-i18n],html[lang=ar] h2{font-family:'Cairo',sans-serif;letter-spacing:0}
+html[lang=ar] th{text-align:left}
+html[lang=ar] .typed{font-family:'Cairo',sans-serif;direction:rtl}
+html[lang=ar] .filter{font-family:'Cairo',sans-serif}
 footer{border-top:1px solid var(--line);padding:18px 0;color:var(--muted);font:12px var(--mono);text-align:center}
 @media (prefers-reduced-motion:reduce){ #rain{display:none} .status i,.typed::after{animation:none} }
 </style>
@@ -106,10 +114,11 @@ footer{border-top:1px solid var(--line);padding:18px 0;color:var(--muted);font:1
   <a class="logo" href="/">JBJ//<b>IDS</b></a>
   <span class="status"><i></i>SYSTEMS ONLINE</span>
   <nav>
-    <a href="https://batch5ai.lol">Home</a>
-    <a href="https://lab.batch5ai.lol">Ops Room</a>
-    <a href="https://phish.batch5ai.lol">Phishing</a>
-    <a class="on" href="/">IDS</a>
+    <a href="https://batch5ai.lol" data-i18n="nav_home">Home</a>
+    <a href="https://lab.batch5ai.lol" data-i18n="nav_room">Ops Room</a>
+    <a href="https://phish.batch5ai.lol" data-i18n="nav_phish">Phishing</a>
+    <a class="on" href="/" data-i18n="nav_ids">IDS</a>
+    <button class="lang" id="lang" type="button">ع</button>
   </nav>
   {% if card and not card.error %}<div class="meta">model: {{ card.name }} · {{ card.n_classes }} classes · {{ card.n_features }} features</div>{% endif %}
 </div></header>
@@ -117,6 +126,47 @@ footer{border-top:1px solid var(--line);padding:18px 0;color:var(--muted);font:1
 {% block body %}{% endblock %}
 </div></main>
 <footer>JBJ//IDS · CSE-CIC-IDS2018 · MSCS640 · served from g1 (us-central1-a)</footer>
+<script>
+/* Arabic / English. English text in the templates is the no-JS fallback. */
+var T = {
+ ar: {nav_home:"الرئيسية", nav_room:"غرفة العمليات", nav_phish:"كاشف التصيّد", nav_ids:"كشف التسلل",
+  tag:"Batch 5 · لوحة التهديدات", title:'لوحة <span class="g">كشف التسلل</span> JBJ',
+  sub:"كشف التسلل الشبكي · بيانات CSE-CIC-IDS2018 · 14 فئة",
+  analyse:"تحليل حركة الشبكة", upload_help:"ارفع ملف CSV من CICFlowMeter بنفس أعمدة CSE-CIC-IDS2018. عمود Label اختياري، وإذا وُجد يقيّم التقرير النموذج عليه أيضًا.",
+  select:"اختر ملف CSV", generate:"أنشئ تقرير التهديدات", demo:"أو جرّب على عيّنة الاختبار المرفقة",
+  deployed:"النموذج المنشور", m_model:"النموذج", m_trained:"تاريخ التدريب", m_f1:"macro F1 على الاختبار",
+  m_acc:"الدقة على الاختبار", m_feat:"عدد الخصائص", m_ae:"كاشف الشذوذ", ae_on:"مُرمِّز تلقائي (على الحركة الطبيعية)", ae_off:"غير مفعّل",
+  model_note:"النموذج المُشرف يحدد نوع الهجوم، والمُرمِّز التلقائي ينبّه إلى التدفقات التي لا تشبه الحركة الطبيعية حتى لو لم تطابق أي فئة معروفة.",
+  report:"تقرير التهديدات", scored:"تدفق حُلّل خلال", seconds:"ثانية", dl_mal:"تنزيل التدفقات الخبيثة", dl_all:"تنزيل كل النتائج", new_upload:"رفع ملف جديد",
+  k_flows:"تدفقًا حُلّل", k_mal:"خبيث", k_crit:"خطورة حرجة (Bot و Infiltration و SQLi)", k_anom:"شاذ لكنه صُنّف طبيعيًا (للمراجعة)", k_high:"خطورة عالية",
+  attack_types:"أنواع الهجمات المكتشفة", no_mal:"لم تُكتشف تدفقات خبيثة.", targeted:"الأكثر استهدافًا",
+  g_dst_ip:"عنوان IP الوجهة", g_src_ip:"عنوان IP المصدر", g_dst_port:"منفذ الوجهة", no_hosts:"لا توجد أعمدة عناوين أو منافذ في هذا الملف.",
+  evaluation:"التقييم مقابل التسميات المرفوعة", e_f1:"macro F1", e_acc:"الدقة", e_dr:"نسبة اكتشاف الهجمات", e_fpr:"نسبة الإنذار الكاذب على الطبيعي",
+  cm:"مصفوفة الالتباس (أعداد)", triage:"التدفقات الخبيثة حسب الخطورة والثقة", filter:"تصفية (IP، منفذ، نوع الهجوم…)",
+  top500:"يعرض أعلى 500 فقط. نزّل ملف CSV للقائمة الكاملة.", nothing:"لا شيء للمراجعة.",
+  sev_Critical:"حرج", sev_High:"عالٍ", sev_Medium:"متوسط", sev_None:"لا شيء",
+  col_Predicted:"المتوقع", col_Confidence:"الثقة", "col_P(attack)":"احتمال الهجوم", col_Severity:"الخطورة", "col_Anomaly score":"درجة الشذوذ",
+  col_Anomalous:"شاذ", "col_True label":"التسمية الحقيقية", "col_Dst Port":"منفذ الوجهة", col_Protocol:"البروتوكول", "col_Dst IP":"IP الوجهة", "col_Src IP":"IP المصدر",
+  typed:["> تحميل النموذج ... تم","> الفئات: طبيعي + 13 نوع هجوم","> ارفع ملف CSV من CICFlowMeter للفحص","> بانتظار حركة الشبكة ..."]},
+ en: {typed:["> loading model ... ok","> classes: Benign + 13 attack types","> upload a CICFlowMeter CSV to scan","> awaiting traffic ..."]}
+};
+document.querySelectorAll("[data-i18n],[data-i18n-html],[data-i18n-ph]").forEach(function(e){
+  e.setAttribute("data-en", e.getAttribute("data-i18n-ph") !== null ? e.placeholder : e.innerHTML);
+});
+function setLang(l){
+  var d = document.documentElement; d.lang = l; d.dir = (l === "ar") ? "rtl" : "ltr";
+  document.querySelectorAll("[data-i18n]").forEach(function(e){ var v = T.ar[e.getAttribute("data-i18n")];
+    e.textContent = (l === "ar" && v) ? v : e.getAttribute("data-en").replace(/<[^>]+>/g, ""); });
+  document.querySelectorAll("[data-i18n-html]").forEach(function(e){ var v = T.ar[e.getAttribute("data-i18n-html")];
+    e.innerHTML = (l === "ar" && v) ? v : e.getAttribute("data-en"); });
+  document.querySelectorAll("[data-i18n-ph]").forEach(function(e){ var v = T.ar[e.getAttribute("data-i18n-ph")];
+    e.placeholder = (l === "ar" && v) ? v : e.getAttribute("data-en"); });
+  document.getElementById("lang").textContent = (l === "ar") ? "EN" : "ع";
+  try { localStorage.setItem("jbj-lang", l); } catch (e) {}
+}
+setLang(document.documentElement.lang === "ar" ? "ar" : "en");
+document.getElementById("lang").onclick = function(){ setLang(document.documentElement.lang === "ar" ? "en" : "ar"); };
+</script>
 <script>
 (function(){
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
