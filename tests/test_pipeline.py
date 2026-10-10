@@ -46,6 +46,21 @@ class TestCleaning(unittest.TestCase):
         self.assertEqual(info["ambiguous_label_rows_removed"], 2)
         self.assertEqual(len(out), 2)
 
+    def test_ambiguous_majority_uses_full_data_counts(self):
+        # vector (2,0): 2 sampled Benign rows vs 3 Bot rows. Benign was kept with
+        # p=0.1, so it stands for ~20 real flows against 3 Bot -> Benign wins.
+        df = pd.DataFrame({"a": [2, 2, 2, 2, 2, 3], "b": [0, 0, 0, 0, 0, 1],
+                           "Label": ["Benign", "Benign", "Bot", "Bot", "Bot", "Bot"]})
+        out, info = drop_duplicate_flows(df, policy="majority",
+                                         keep_prob={"Benign": 0.1, "Bot": 1.0})
+        self.assertEqual(sorted(map(tuple, out[["a", "Label"]].values.tolist())),
+                         [(2, "Benign"), (3, "Bot")])
+        self.assertEqual(info["ambiguous_vectors"], 1)
+        self.assertEqual(info["ambiguous_vectors_kept_by_label"], {"Benign": 1})
+        # without the correction the raw majority would wrongly be Bot
+        out2, _ = drop_duplicate_flows(df, policy="majority", keep_prob={})
+        self.assertIn((2, "Bot"), list(map(tuple, out2[["a", "Label"]].values.tolist())))
+
 
 class TestImbalance(unittest.TestCase):
     def test_smote_reaches_target_and_interpolates(self):

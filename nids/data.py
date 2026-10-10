@@ -90,13 +90,27 @@ def clean_frame(df: pd.DataFrame, keep_dst_port: bool = True,
     return out
 
 
-def drop_duplicate_flows(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
-    """Remove exact duplicates and flows whose label is ambiguous.
+def drop_duplicate_flows(df: pd.DataFrame, policy: str = "drop",
+                         keep_prob: dict[str, float] | None = None) -> tuple[pd.DataFrame, dict]:
+    """Remove exact duplicates and resolve flows whose label is ambiguous.
 
     Two flows with identical feature vectors but different labels cannot be
-    separated by any model that sees only these features; keeping them only
-    adds label noise, so all copies of such a vector are dropped.
+    separated by any model that sees only these features. ``policy`` decides
+    what happens to such a vector:
+
+    * ``"drop"`` -- drop every copy (no label noise, but a class whose flows
+      are all shared with another class disappears).
+    * ``"majority"`` -- keep one copy, labelled with the class it most often
+      carries in the *full* data. Counts in the sample are divided by each
+      class's sampling probability (``keep_prob``) so that down-sampled Benign
+      is not under-counted. This is the Bayes-optimal label for that vector.
+
+    In CSE-CIC-IDS2018 nearly all ``FTP-BruteForce`` and
+    ``DoS attacks-SlowHTTPTest`` flows share one feature vector, so ``"drop"``
+    removes both classes while ``"majority"`` keeps the more frequent one.
     """
+    if policy not in ("drop", "majority"):
+        raise ValueError(f"unknown ambiguous-label policy {policy!r}")
     feat_cols = [c for c in df.columns if c != LABEL_COL]
     n0 = len(df)
     h = pd.util.hash_pandas_object(df[feat_cols], index=False).to_numpy()
@@ -106,11 +120,25 @@ def drop_duplicate_flows(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
     amb_mask = tmp["h"].isin(ambiguous).to_numpy()
     dup_mask = tmp.duplicated(["h", "y"]).to_numpy()
     keep = ~(amb_mask | dup_mask)
+    resolved: dict[str, int] = {}
+    if policy == "majority" and ambiguous:
+        amb = tmp.loc[amb_mask].copy()
+        amb["pos"] = np.flatnonzero(amb_mask)
+        probs = keep_prob or {}
+        amb["w"] = 1.0 / amb["y"].map(lambda y: probs.get(y, 1.0))   # estimated full-data count
+        weight = amb.groupby(["h", "y"])["w"].sum().reset_index()
+        winner = weight.sort_values("w", ascending=False).drop_duplicates("h")
+        firsts = amb.drop_duplicates(["h", "y"]).merge(winner[["h", "y"]], on=["h", "y"])
+        keep[firsts["pos"].to_numpy()] = True
+        resolved = firsts["y"].value_counts().to_dict()
     out = df.loc[keep].reset_index(drop=True)
     info = {
+        "policy": policy,
         "rows_before": int(n0),
         "exact_duplicates_removed": int((dup_mask & ~amb_mask).sum()),
-        "ambiguous_label_rows_removed": int(amb_mask.sum()),
+        "ambiguous_label_rows_removed": int(amb_mask.sum()) - sum(resolved.values()),
+        "ambiguous_vectors": len(ambiguous),
+        "ambiguous_vectors_kept_by_label": {k: int(v) for k, v in resolved.items()},
         "rows_after": int(len(out)),
     }
     return out, info
@@ -196,7 +224,8 @@ def build_sample(files: list[Path], cfg: dict, seed: int) -> tuple[pd.DataFrame,
 
     dedup_info = {"skipped": True}
     if dcfg["drop_duplicates"]:
-        sample, dedup_info = drop_duplicate_flows(sample)
+        sample, dedup_info = drop_duplicate_flows(
+            sample, policy=dcfg.get("ambiguous_policy", "drop"), keep_prob=probs)
 
     summary = {
         "files": [p.name for p in files],

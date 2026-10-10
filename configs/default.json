@@ -14,6 +14,7 @@
     "cap_benign": 1000000,
     "cap_attack": 200000,
     "drop_duplicates": true,
+    "ambiguous_policy": "majority",
     "keep_dst_port": true,
     "test_size": 0.15,
     "val_size": 0.15
