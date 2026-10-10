@@ -34,8 +34,9 @@
 Signature-based defences miss novel attacks, and on flow data the attacks a
 SOC cares about are rare. We build an end-to-end pipeline for 15-class
 intrusion detection on CSE-CIC-IDS2018~\cite{sharafaldin2018}. It streams
-\NumRawFlows{} raw flows in chunks, removes non-finite values, repeated headers,
-duplicates and label-ambiguous flows, and builds a class-capped sample of
+\NumRawFlows{} raw flows in chunks, removes non-finite values, repeated headers
+and duplicates, resolves flows whose identical features carry conflicting labels
+by a sampling-corrected majority vote, and builds a class-capped sample of
 \NumSampleFlows{} flows. Feature selection reduces \NumFeaturesIn{} flow
 statistics to \NumFeaturesOut{}. Class imbalance is handled on the training
 split only, by Benign under-sampling, SMOTE~\cite{chawla2002} and damped class
@@ -103,11 +104,24 @@ attacked on which day. (c) All features are coerced to numbers.
 \texttt{Flow Pkts/s} when a flow has zero duration, become missing values and
 are later imputed with the training median. Values outside the
 \texttt{float32} range are clipped. (d) After sampling, exact duplicates are
-removed, along with every copy of a feature vector that carries more than one
-label, because no model can separate such flows and they only add label
-noise.
+removed. Feature vectors that occur with more than one label cannot be
+separated by any model that sees only these features, so each is reduced to a
+single copy labelled with the class it carries most often in the \emph{full}
+data. Because classes are sampled at different rates (Sec.~\ref{sec:sampling}),
+the sample counts are first divided by each class's sampling probability;
+otherwise the down-sampled Benign class would be under-counted. This choice is
+the Bayes-optimal label for an indistinguishable vector, and it matters here:
+in our nine-day pilot run, the obvious alternative of dropping every
+conflicting copy cut \emph{FTP-BruteForce} from 193{,}360 flows to 2 and
+\emph{DoS-SlowHTTPTest} from 139{,}890 to 3, because almost all flows of these
+two classes share the same feature vectors. Both classes then vanished from the
+test split, and a 12-class test macro-$F_1$ of 0.934 hid a model that could
+never recognise them. With majority resolution both classes survive
+(24 and 33 distinct flows), and every one of the 15 labels reaches the test set.
+This is consistent with the labelling problems documented for this
+dataset~\cite{liu2022}.
 
-\subsection{Sampling}
+\subsection{Sampling}\label{sec:sampling}
 A first pass reads only the \texttt{Label} column and counts every class. A
 second pass keeps each row with probability $\min(1, c/n_y)$, where $n_y$ is
 the class count and $c$ is a cap (1M for Benign, 200k for each attack). Rare
@@ -244,7 +258,8 @@ shows live macro-$F_1$ and a confusion matrix. A JSON endpoint
 % ---------------------------------------------------------------------------
 \section{Conclusion and Future Work}
 On a heavily imbalanced, artefact-laden benchmark, careful data engineering
-(de-duplication, label-conflict removal, train-only rebalancing) and
+(de-duplication, sampling-corrected resolution of label conflicts, train-only
+rebalancing) and
 macro-$F_1$-driven decisions matter as much as the choice of classifier.
 Future work: (i) evaluate on a day-held-out split, to measure generalisation
 to new attack campaigns rather than to new flows from the same campaign;
@@ -256,11 +271,16 @@ for a target alert budget.
 
 % ---------------------------------------------------------------------------
 \section*{Statement on the Use of AI Tools}
-\fillin{Describe truthfully how AI tools were used, e.g.: ``We used an AI
-assistant (Claude) to scaffold parts of the code base and to draft sections of
-this paper. We reviewed and tested all code, ran all experiments ourselves,
-and checked every statement and every reference against its original
-source.'' Edit this to match what you actually did.}
+M.~A.~Al-Jabri used Claude (Anthropic), through the Claude Code assistant, to
+write and refactor most of the code base, to debug it (the XGBoost evaluation
+metric for two-class data, and the sampling-corrected resolution of conflicting
+labels described in Sec.~\ref{sec:sampling}), to write the deployment scripts
+and the dashboard interface, and to draft parts of this paper. The decisions
+on which data to use, which runs to keep and how to report them were ours. All
+experiments were run on our own machines, every number in this paper comes
+from the logged outputs in the repository, and every reference was checked
+against the publisher's record. \fillin{M.~A.~Al-Nabit: describe your own use
+of AI tools, or state that you used none.}
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
