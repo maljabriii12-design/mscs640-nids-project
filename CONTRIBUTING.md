@@ -113,3 +113,28 @@ Rules you must follow:
    my own GitHub account (malnabit).
 6. Remind me to describe your help truthfully in task M3.
 ```
+
+## 7. Review notes for Mesalam (2026-10-11)
+
+> **ملخص بالعربي:** راجع محمد عملك. اختبار التشغيل ممتاز، والمرجعان الجديدان صحيحان (تحققنا منهما في
+> سجل الناشر)، والمقدمة جيدة. المطلوب منك الآن: (1) تصحيح جملتك في الإفصاح، لأنها تذكر رسم الخطورة في
+> لوحة التحكم ولم يُرفع أي تعديل عليها؛ (2) إضافة حلّي مشكلتي ويندوز اللتين وجدتهما إلى خطوات الإعداد؛
+> (3) إضافة مرجعيك إلى الشريحة 4 والتدرّب على شرائحك. الورقة الآن 4 صفحات بالضبط، فلا تُطِل النص.
+
+**Done well**
+- M1: clear `docs/REPRODUCIBILITY.md`; fresh Windows 11 clone, 7/7 tests, smoke run and dashboard OK.
+- M2: Introduction reads well. Both new references are real and match the publisher's record
+  (Crossref): `karatas2020` (IEEE Access 8, 32150-32162) and `lin2019` (CLOUD 2019, LNCS, 161-176);
+  the 96.2% accuracy you quote is in the Springer abstract. No numbers or other sections changed.
+
+**Please fix**
+
+| # | Note | What to do |
+|---|---|---|
+| R1 | Your AI-use sentence says you used Claude "to add the severity chart to the dashboard", but no dashboard change is in the repository. | Either push the chart (task M4 rules: tell Mohammed first, `pytest` green, both languages) or delete that clause. Keep "to draft his demo-day slides" only if you actually edited the slides. The statement must match what you did. |
+| R2 | M1 asked you to fix README steps that were wrong or unclear. You found two real gaps (no Python on a fresh Windows; `activate` blocked by the execution policy). | Add both fixes as a short note in Section 1 of this file (and the README setup section). |
+| R3 | Slide 4 (Related work) still lists only the original four papers. | Add your two references (Karatas et al. 2020; Lin et al. 2019) to slide 4 in both decks (you have Editor access), then practise slides 2, 3, 4 and 12. |
+
+**Space budget:** with your additions the paper reached 5 pages; Mohammed trimmed about 18 lines
+from his own sections, so it is exactly 4 pages again (checked on Overleaf, 0 errors) with about
+10 lines to spare. If R1 changes your sentence, keep it the same length or shorter.

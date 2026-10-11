@@ -114,18 +114,14 @@ removed. Feature vectors that occur with more than one label cannot be
 separated by any model that sees only these features, so each is reduced to a
 single copy labelled with the class it carries most often in the \emph{full}
 data. Because classes are sampled at different rates (Sec.~\ref{sec:sampling}),
-the sample counts are first divided by each class's sampling probability;
-otherwise the down-sampled Benign class would be under-counted. This choice is
-the Bayes-optimal label for an indistinguishable vector, and it matters here:
-in our nine-day pilot run, the obvious alternative of dropping every
-conflicting copy cut \emph{FTP-BruteForce} from 193{,}360 flows to 2 and
-\emph{DoS-SlowHTTPTest} from 139{,}890 to 3, because almost all flows of these
-two classes share the same feature vectors. Both classes then vanished from the
-test split, and a 12-class test macro-$F_1$ of 0.934 hid a model that could
-never recognise them. With majority resolution both classes survive
-(24 and 33 distinct flows), and every one of the 15 labels reaches the test set.
-This is consistent with the labelling problems documented for this
-dataset~\cite{liu2022}.
+the sample counts are first divided by each class's sampling probability.
+This is the Bayes-optimal label for an indistinguishable vector, and it
+matters: in a nine-day pilot run, dropping every conflicting copy instead cut
+\emph{FTP-BruteForce} from 193{,}360 flows to 2 and \emph{DoS-SlowHTTPTest}
+from 139{,}890 to 3, because their flows share the same feature vectors, so
+both vanished from the test split. With majority resolution they survive (24
+and 33 distinct flows) and all 15 labels reach the test set, consistent with
+the labelling problems reported in~\cite{liu2022}.
 
 \subsection{Sampling}\label{sec:sampling}
 A first pass reads only the \texttt{Label} column and counts every class. A
@@ -155,9 +151,7 @@ features (\texttt{Flow Pkts/s}, \texttt{Flow Duration}, \texttt{Flow IAT Mean},
 (Hulk, HOIC, LOIC) from low-and-slow attacks (Slowloris, SlowHTTPTest), and by
 \texttt{Dst Port}, which names the targeted service (21 for FTP, 22 for SSH, 80
 for the web attacks). The window and port features may partly reflect the
-testbed configuration rather than attack behaviour, a caveat for deployment on
-other networks that the day-held-out evaluation in Sec.~\ref{sec:conc} would
-test.
+testbed rather than attack behaviour (see Sec.~\ref{sec:conc}).
 
 \begin{figure}[t]
 \centering
@@ -200,17 +194,12 @@ by coordinate ascent over a log-spaced grid that maximises
 macro-$F_1$ only.
 
 \textbf{Hyper-parameter tuning.} \texttt{python main.py train --tune} runs a
-random search (12 trials) over the GBDT learning rate
-$\{0.03,0.05,0.1,0.2\}$, depth $\{6,8,10,12\}$ and L2 penalty
-$\{0,0.5,1,5\}$ on a 150k-flow subsample of the rebalanced training set,
-scored by validation macro-$F_1$ (20 minutes in total). Validation macro-$F_1$
-ranged from 0.867 to 0.889. The best trial (learning rate 0.1, depth 8,
-L2~1.0) coincided with the defaults above, so retraining on the full data
-reproduced the untuned scores exactly: within this range the model is not
-sensitive to these settings, and the largest effects come from the data
-engineering and the class-bias step instead. (The search space also listed a
-leaf cap, which the XGBoost engine did not receive at the time; this has since
-been fixed, and the 12 trials were distinct in the other three settings.)
+random search (12 trials) over the GBDT learning rate, depth and L2 penalty
+on a 150k-flow subsample, scored by validation macro-$F_1$. Scores ranged from
+0.867 to 0.889, and the best trial coincided with the defaults above, so the
+model is not sensitive to these settings; the largest effects come from the
+data engineering and the class-bias step. (A leaf cap in the search space did
+not reach XGBoost at the time; this is now fixed.)
 
 \textbf{Autoencoder.} A 32-8-32 bottleneck network is trained to reconstruct
 Benign training flows only. A flow is flagged when its reconstruction error
@@ -225,9 +214,7 @@ on validation. $F_1^M$ is macro-$F_1$ and $F_1^W$ is support-weighted $F_1$.
 Table~\ref{tab:perclass} and Fig.~\ref{fig:cm} break down the selected model
 by class, and Fig.~\ref{fig:roc} shows one-vs-rest and binary ROC curves.
 Over all attack types combined, \BestModel{} detects \DetectionRate{} of
-attack flows at a Benign false-positive rate of \FalsePositiveRate{}. The
-autoencoder alone reaches an attack-vs-benign AUC of \AEAUC{}, flagging
-\AEDetectionRate{} of attacks at \AEFalsePositiveRate{} false positives.
+attack flows at a Benign false-positive rate of \FalsePositiveRate{}.
 
 \begin{table}[t]
 \caption{Model comparison (validation and held-out test)}
@@ -252,15 +239,14 @@ autoencoder alone reaches an attack-vs-benign AUC of \AEAUC{}, flagging
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=0.66\textwidth]{roc_curves}
+\includegraphics[width=0.6\textwidth]{roc_curves}
 \caption{Test ROC curves (log-scaled FPR): one-vs-rest per class (left) and attack-vs-benign (right).}
 \label{fig:roc}
 \end{figure*}
 
 \textbf{Models.} Gradient-boosted trees beat the Random Forest baseline
 (test macro-$F_1$ 0.849 vs 0.806), and the MLP is weakest (0.765) despite the
-longest training time, which matches the usual advantage of tree ensembles on
-tabular flow statistics. The class-bias step is the single largest gain: it
+longest training time. The class-bias step is the single largest gain: it
 adds 0.015 to XGBoost, 0.075 to the Random Forest and 0.076 to the MLP,
 because it moves decisions in favour of the rare classes without retraining.
 Selection on validation picks XGBoost with class bias (0.942 validation,
