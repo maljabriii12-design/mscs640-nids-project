@@ -57,16 +57,22 @@ intrusion detection, class imbalance, SMOTE, gradient boosting, autoencoder, CSE
 % ---------------------------------------------------------------------------
 \section{Introduction}
 Machine-learning network intrusion detection systems (NIDS) learn attack
-behaviour from flow statistics rather than payload signatures. CSE-CIC-IDS2018
-is a widely used benchmark for them~\cite{leevy2020}. Two properties make it
-harder than headline accuracies suggest. First, it is severely imbalanced:
-Benign flows outnumber the rarest attack, SQL Injection, by about five orders
-of magnitude, so accuracy rewards a model that ignores attacks. Second, the
-released CSVs contain labelling and processing artefacts, documented for the
-closely related CIC-IDS2017~\cite{engelen2021} and for both
-datasets~\cite{liu2022}. We therefore optimise and report \emph{macro}-$F_1$,
-in which every class counts equally, and treat data engineering as a
-first-class part of the method.
+behaviour from flow statistics instead of payload signatures, and
+CSE-CIC-IDS2018~\cite{sharafaldin2018} has become a common benchmark for
+them~\cite{leevy2020}. Two properties make it harder than headline accuracies
+suggest. First, it is severely imbalanced: Benign flows outnumber the rarest
+attack, SQL Injection, by about five orders of magnitude, so accuracy rewards a
+model that ignores attacks. Second, the released CSVs contain labelling and
+processing errors, documented for the related CIC-IDS2017~\cite{engelen2021}
+and for both datasets~\cite{liu2022}.
+
+Earlier work on this dataset oversampled the minority classes with SMOTE before
+training classical learners such as Random Forest and gradient
+boosting~\cite{karatas2020}, or trained an attention-based LSTM with SMOTE and a
+class-weighted loss, reporting 96.2\% overall accuracy~\cite{lin2019}. On this
+class distribution an overall accuracy says little about the rare attacks. We
+therefore optimise and report \emph{macro}-$F_1$, in which every class counts
+equally, and treat data engineering as part of the method.
 
 Our contributions are: (i) a memory-bounded, two-pass data pipeline for the
 full 6.4\,GB dataset; (ii) a controlled comparison of tree ensembles and an
@@ -315,8 +321,11 @@ and the dashboard interface, and to draft parts of this paper. The decisions
 on which data to use, which runs to keep and how to report them were ours. All
 experiments were run on our own machines, every number in this paper comes
 from the logged outputs in the repository, and every reference was checked
-against the publisher's record. \fillin{M.~A.~Al-Nabit: describe your own use
-of AI tools, or state that you used none.}
+against the publisher's record. M.~A.~Al-Nabit used Claude
+(Anthropic) to automate the installation and reproducibility check on a fresh
+Windows machine, to draft the reproducibility report, and to find and draft the
+two added related-work references and the revised Introduction; Claude also
+checked both references against their publisher records.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
