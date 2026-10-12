@@ -171,3 +171,10 @@ the PDF and both slide decks (Arabic and English, PDF and PowerPoint) are in the
 | N2 | Rehearse the live demo | Open https://ids.batch5ai.lol one minute before the talk (the first request after a restart takes about 17 s). Upload the 5,000-flow demo sample, show the threat report, switch the language once, and point out the "anomalous but classified Benign" flows. |
 | N3 | Prepare for questions | Likely: why macro-F1 and not accuracy; why XGBoost and not the Random Forest that scored higher on test (selection on validation only); how SMOTE is kept out of the test set (training split only); what the autoencoder adds; 14 attack types vs 15 classes (Benign + 14). The cover slide's notes and slide 14's notes list them. |
 | N4 | Questions for the instructor (whoever of us sees him first) | (a) the date of week 13 (final submission and demo day); (b) how to submit (GitHub link, file upload or email); (c) the hidden test set: does the TA run `python main.py predict` on our repository, or do we send a predictions file, and in which format; (d) the grading table on the project page adds up to 85, not 100. |
+
+**Note from Mesalam on N4 (d) (2026-10-12):** the grading table on the project page
+(<https://courses.karbab.net/mscs640/project.html>, "Evaluation Criteria") now adds up to 100,
+and the page states "Total points: 100": Data Pipeline 15, Methodology 15, Reproducibility 15,
+The Website 15, The Paper 15, Presentation 15, Performance Rank 10. The Presentation row
+(demo-day talk, live demo and Q&A) may have been added after you read it. So (d) no longer
+needs to be asked; questions (a)-(c) remain.
