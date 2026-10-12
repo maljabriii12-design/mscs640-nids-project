@@ -152,3 +152,19 @@ from his own sections, so it is exactly 4 pages again (checked on Overleaf, 0 er
 AI-use sentence now ends "He also used it to draft his demo-day slides." (true: I used Claude on
 the slides). No dashboard change is pushed, so no redeploy is needed. Compiled with pdfLaTeX:
 4 pages, no errors or undefined references, about 12 lines to spare. Thank you for R2 and R3.
+
+## 8. Next steps for Mesalam (2026-10-12)
+
+> **ملخص بالعربي:** كل مهامك (M1 إلى M3 والملاحظات R1 إلى R3) انتهت، والورقة النهائية 4 صفحات. المتبقي:
+> (1) التدرّب على شرائحك 2 و3 و4 و12 وعلى العرض المباشر؛ (2) الاستعداد للأسئلة المتوقعة؛ (3) سؤال
+> الدكتور عن الأمور الأربعة غير المذكورة في صفحة المشروع، إن لم يسأله محمد.
+
+**Status:** all your tasks (M1-M3, R1-R3) are done. The final paper is 4 pages (Overleaf, 0 errors);
+the PDF and both slide decks (Arabic and English, PDF and PowerPoint) are in the shared course folder.
+
+| # | Task | Details |
+|---|---|---|
+| N1 | Rehearse your slides | Slides 2 (problem), 3 (data), 4 (related work, now six references) and 12 (live demo), in both languages. Speaker notes are under each slide. Aim for about one minute per slide. |
+| N2 | Rehearse the live demo | Open https://ids.batch5ai.lol one minute before the talk (the first request after a restart takes about 17 s). Upload the 5,000-flow demo sample, show the threat report, switch the language once, and point out the "anomalous but classified Benign" flows. |
+| N3 | Prepare for questions | Likely: why macro-F1 and not accuracy; why XGBoost and not the Random Forest that scored higher on test (selection on validation only); how SMOTE is kept out of the test set (training split only); what the autoencoder adds; 14 attack types vs 15 classes (Benign + 14). The cover slide's notes and slide 14's notes list them. |
+| N4 | Questions for the instructor (whoever of us sees him first) | (a) the date of week 13 (final submission and demo day); (b) how to submit (GitHub link, file upload or email); (c) the hidden test set: does the TA run `python main.py predict` on our repository, or do we send a predictions file, and in which format; (d) the grading table on the project page adds up to 85, not 100. |
