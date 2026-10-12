@@ -77,8 +77,11 @@ shows who did what.
 
 ## 5. Rules
 
-- **Do not commit data or models.** `data/raw/`, `data/processed/`, `models/` and `reports/`
-  are in `.gitignore`; the dataset is downloaded with `python main.py download`.
+- **Do not commit data or new models.** `data/raw/`, `data/processed/`, `models/` and `reports/`
+  are in `.gitignore`; the dataset is downloaded with `python main.py download`. The one
+  exception is the final model (`models/nids_bundle.joblib`, `demo_test_flows.csv`,
+  `SHA256SUMS`), which ships so the TA can score the hidden test set; never overwrite or
+  re-commit it, and keep the exact versions in `requirements.txt`.
 - **Do not retrain or change results.** The numbers, tables and figures in the paper come from
   `paper/generated/` and `paper/figures/`, written by `python main.py train`; never edit them by
   hand. Do not edit `deploy/` or the server.

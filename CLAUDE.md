@@ -19,7 +19,9 @@ start of a session, ask which student you are helping. For Mesalam, work only on
 - Do not retrain on the real data, change `configs/`, `nids/` or `deploy/`, or touch the live
   server unless the student explicitly asks; the deployed model is documented in
   `docs/EXPERIMENTS.md` (run 3).
-- Do not commit `data/`, `models/` or `reports/` (gitignored).
+- Do not commit `data/`, `models/` or `reports/` (gitignored). Exception: the shipped final
+  model (`models/nids_bundle.joblib`, `demo_test_flows.csv`, `SHA256SUMS`); never overwrite or
+  re-commit it, and do not change the pinned versions in `requirements.txt`.
 - Run `python -m pytest -q` before proposing a commit. Let the student commit and push.
 - Dashboard templates are bilingual: text carries `data-i18n="key"`, Arabic strings live in
   `T.ar` in `webapp/templates/base.html`, English stays in the HTML as fallback. Never write

@@ -84,9 +84,18 @@ python main.py download --smallest && python main.py all
 
 ### Hidden test set / leaderboard
 
+The final trained model ships with the repository (`models/nids_bundle.joblib`, 12.7 MB:
+XGBoost + class bias, test macro-F1 0.864 over 15 classes; checksums in `models/SHA256SUMS`),
+so scoring needs no download and no training. After Section 1:
+
 ```bash
 python main.py predict path/to/hidden_test.csv -o reports/predictions.csv
 ```
+
+`requirements.txt` pins the exact library versions the model was trained with; the bundle is
+a joblib pickle and is only guaranteed to load with them. To check the setup, score the
+shipped demo sample, which carries true labels (expected macro-F1 about 0.86):
+`python main.py predict models/demo_test_flows.csv -o reports/demo_predictions.csv`.
 
 The output has one row per input flow. `Label` holds the predicted class,
 using the dataset's exact spellings, alongside the confidence, P(attack),

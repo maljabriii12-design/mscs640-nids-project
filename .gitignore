@@ -5,6 +5,10 @@ data/raw/*
 data/processed/*
 models/*
 !models/.gitkeep
+# The final trained model and its demo sample ship with the repository (see README, Section 3).
+!models/nids_bundle.joblib
+!models/demo_test_flows.csv
+!models/SHA256SUMS
 reports/*
 !reports/.gitkeep
 paper/*.aux
