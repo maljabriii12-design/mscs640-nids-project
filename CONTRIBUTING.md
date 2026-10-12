@@ -24,6 +24,11 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
+Two problems seen on a fresh Windows 11 machine (task M1): if `python` opens the Microsoft Store,
+Python is not installed yet, so run `winget install --id Python.Python.3.12 -e --scope user` and
+reopen PowerShell; if `.venv\Scripts\activate` fails with "running scripts is disabled on this
+system", run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once and activate again.
+
 The first `git clone` or `git push` opens a GitHub window; sign in with **your own** account
 and click **Authorize**. Never commit with someone else's name or credentials.
 
@@ -134,6 +139,10 @@ Rules you must follow:
 | R1 | Your AI-use sentence says you used Claude "to add the severity chart to the dashboard", but no dashboard change is in the repository. | Either push the chart (task M4 rules: tell Mohammed first, `pytest` green, both languages) or delete that clause. Keep "to draft his demo-day slides" only if you actually edited the slides. The statement must match what you did. |
 | R2 | M1 asked you to fix README steps that were wrong or unclear. You found two real gaps (no Python on a fresh Windows; `activate` blocked by the execution policy). | Add both fixes as a short note in Section 1 of this file (and the README setup section). |
 | R3 | Slide 4 (Related work) still lists only the original four papers. | Add your two references (Karatas et al. 2020; Lin et al. 2019) to slide 4 in both decks (you have Editor access), then practise slides 2, 3, 4 and 12. |
+
+**Update 2026-10-12:** R2 and R3 were done by Mohammed (Windows fixes added to Section 1 and the
+README; both references added to slide 4 in both decks). **Only R1 is left for you**, since the
+AI-use sentence describes your own work.
 
 **Space budget:** with your additions the paper reached 5 pages; Mohammed trimmed about 18 lines
 from his own sections, so it is exactly 4 pages again (checked on Overleaf, 0 errors) with about

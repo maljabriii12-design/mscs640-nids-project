@@ -32,6 +32,11 @@ python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\
 pip install -r requirements.txt
 ```
 
+On a fresh Windows machine (see [`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md)): if `python`
+opens the Microsoft Store, install Python first (`winget install --id Python.Python.3.12 -e --scope user`)
+and reopen the terminal; if `.venv\Scripts\activate` says running scripts is disabled, run
+`Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once and activate again.
+
 ## 2. Smoke test (about 3 minutes, no download)
 
 This generates synthetic flows with the exact CSE-CIC-IDS2018 schema and runs
