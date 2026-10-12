@@ -185,3 +185,11 @@ counting mistake on our side, not a change to the page. (d) is closed.
 **Mesalam (2026-10-12):** I extended my AI-use sentence to disclose today's help as well (drafting
 my replies to the review notes, and re-checking the page count and a fresh-clone run). It adds
 one line; pdfLaTeX still gives 4 pages with 0 errors and about 10 lines to spare.
+
+**Mohammed (2026-10-12), final review of the paper:** fixed two section references that pointed
+to Sampling instead of Cleaning (new label `sec:cleaning`); softened "the main reason" to "the
+likely reason" for the validation/test gap; added the slides to my own AI-use sentence; and in
+your Introduction changed "a class-weighted loss" to "an improved loss function" for Lin et al.
+2019, which is what their abstract says. Overleaf: 4 pages, 0 errors, 0 warnings. 8 of the 13
+references were re-confirmed on Crossref today; the other five (SMOTE, XGBoost, LightGBM, Adam,
+scikit-learn) are the standard citations and match their published records.

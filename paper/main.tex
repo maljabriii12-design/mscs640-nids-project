@@ -68,8 +68,8 @@ and for both datasets~\cite{liu2022}.
 
 Earlier work on this dataset oversampled the minority classes with SMOTE before
 training classical learners such as Random Forest and gradient
-boosting~\cite{karatas2020}, or trained an attention-based LSTM with SMOTE and a
-class-weighted loss, reporting 96.2\% overall accuracy~\cite{lin2019}. On this
+boosting~\cite{karatas2020}, or trained an attention-based LSTM with SMOTE and an
+improved loss function, reporting 96.2\% overall accuracy~\cite{lin2019}. On this
 class distribution an overall accuracy says little about the rare attacks. We
 therefore optimise and report \emph{macro}-$F_1$, in which every class counts
 equally, and treat data engineering as part of the method.
@@ -99,7 +99,7 @@ own spellings.
 \input{generated/dataset.tex}
 \end{table}
 
-\subsection{Cleaning}
+\subsection{Cleaning}\label{sec:cleaning}
 Reading proceeds in chunks of 250k rows, so no file is ever fully loaded.
 Every chunk is cleaned as follows. (a) Header lines repeated mid-file are
 removed. (b) Identifier and time columns (\texttt{Timestamp}, IPs, source
@@ -115,7 +115,7 @@ separated by any model that sees only these features, so each is reduced to a
 single copy labelled with the class it carries most often in the \emph{full}
 data. Because classes are sampled at different rates (Sec.~\ref{sec:sampling}),
 the sample counts are first divided by each class's sampling probability.
-This is the Bayes-optimal label for an indistinguishable vector, and it
+The resulting majority is the Bayes-optimal label for such a vector, and it
 matters: in a nine-day pilot run, dropping every conflicting copy instead cut
 \emph{FTP-BruteForce} from 193{,}360 flows to 2 and \emph{DoS-SlowHTTPTest}
 from 139{,}890 to 3, because their flows share the same feature vectors, so
@@ -261,7 +261,7 @@ infiltrated host's traffic looks like ordinary browsing, which also explains
 most of the 4.5\% false-positive rate. (ii) \emph{DoS-SlowHTTPTest} and
 \emph{FTP-BruteForce} are confused with each other (60\% and 25\% of their
 test flows), as expected from the shared feature vectors found in
-Sec.~\ref{sec:sampling}. (iii) \emph{SQL Injection} spreads to Brute Force
+Sec.~\ref{sec:cleaning}. (iii) \emph{SQL Injection} spreads to Brute Force
 -Web (17\%), Brute Force -XSS (8\%) and Infilteration (17\%), since all three
 web attacks hit the same application with similar request shapes;
 Brute Force -Web and -XSS themselves are rarely confused with each other.
@@ -269,7 +269,7 @@ All other attacks are detected almost perfectly.
 
 \textbf{Reliability of the numbers.} The test split holds only 4
 FTP-BruteForce, 5 SlowHTTPTest and 12 SQL Injection flows, so a single flow
-moves their $F_1$ by 0.1--0.25. This, rather than overfitting, is the main
+moves their $F_1$ by 0.1--0.25. This, more than overfitting, is the likely
 reason for the gap between validation and test macro-$F_1$. The
 autoencoder reaches an AUC of \AEAUC{} but detects only \AEDetectionRate{}
 of attacks at \AEFalsePositiveRate{} false positives, so it is useful as a
@@ -302,8 +302,9 @@ for a target alert budget.
 M.~A.~Al-Jabri used Claude (Anthropic), through the Claude Code assistant, to
 write and refactor most of the code base, to debug it (the XGBoost evaluation
 metric for two-class data, and the sampling-corrected resolution of conflicting
-labels described in Sec.~\ref{sec:sampling}), to write the deployment scripts
-and the dashboard interface, and to draft parts of this paper. The decisions
+labels described in Sec.~\ref{sec:cleaning}), to write the deployment scripts
+and the dashboard interface, and to draft parts of this paper and the
+demo-day slides. The decisions
 on which data to use, which runs to keep and how to report them were ours. All
 experiments were run on our own machines, every number in this paper comes
 from the logged outputs in the repository, and every reference was checked
