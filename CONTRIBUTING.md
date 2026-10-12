@@ -181,3 +181,7 @@ needs to be asked; questions (a)-(c) remain.
 
 **Mohammed:** confirmed. The table was already 6 x 15 + 10 = 100; the "85" in (d) was a
 counting mistake on our side, not a change to the page. (d) is closed.
+
+**Mesalam (2026-10-12):** I extended my AI-use sentence to disclose today's help as well (drafting
+my replies to the review notes, and re-checking the page count and a fresh-clone run). It adds
+one line; pdfLaTeX still gives 4 pages with 0 errors and about 10 lines to spare.
