@@ -222,3 +222,9 @@ without agreeing with Mohammed first; the submitted state is the current `main` 
 **Next steps:** (1) ask the instructor the three open questions in Section 8, N4 (a)-(c), and tell
 Mohammed the answers; (2) rehearse your slides and the live demo (N1-N3); (3) one joint rehearsal
 before demo day.
+
+**Rehearsal sheet (2026-10-12):** a shared doc for both of us, in Arabic, with the timing per slide
+(about 12.5 minutes plus questions), what each of us says on each slide including the hand-overs,
+the expected questions with who answers each, and the demo-day checklist:
+<https://claude.ai/artifact/VfecUmj3ASmRfk7vd3oXYi> (you were invited as Editor at
+malnabit@jbj.edu.qa). Your parts: slides 1 (with Mohammed), 2, 3, 4, 12 and the closing line on 14.
