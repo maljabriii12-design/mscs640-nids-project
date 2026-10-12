@@ -193,3 +193,32 @@ your Introduction changed "a class-weighted loss" to "an improved loss function"
 2019, which is what their abstract says. Overleaf: 4 pages, 0 errors, 0 warnings. 8 of the 13
 references were re-confirmed on Crossref today; the other five (SMOTE, XGBoost, LightGBM, Adam,
 scikit-learn) are the standard citations and match their published records.
+
+## 9. Project complete (2026-10-12)
+
+> **ملاحظة لمسلم بالعربي:** انتهى المشروع من الجانب التقني بالكامل، شكرًا على عملك. كل المطلوب في صفحة
+> المشروع جاهز: الكود والنموذج المدرَّب داخل المستودع، والموقع، والورقة النهائية (4 صفحات بلا أخطاء)،
+> والشرائح بالعربية والإنجليزية. **لا تعدّل أي ملف بعد الآن** إلا بعد الاتفاق مع محمد.
+>
+> **الخطوة التالية:**
+> 1. **اسأل الدكتور** (إن رأيته قبل محمد): موعد الأسبوع 13، وطريقة التسليم، وكيف تُقيَّم مجموعة الاختبار
+>    المخفية. وأخبر محمد بالإجابة فورًا.
+> 2. **تدرّب على شرائحك** 2 و3 و4 و12 وعلى العرض المباشر (القسم 8، N1 إلى N3).
+> 3. **بروفة مشتركة** مع محمد قبل يوم العرض، على العرض كاملًا والأسئلة المتوقعة (ملاحظات الشريحة 14).
+
+**Status:** all deliverables on the project page are done and verified on 2026-10-12.
+
+| Deliverable | Where | Checked |
+|---|---|---|
+| Repository (`main.py`, `requirements.txt`, `README.md`, commits from both of us) | this repository | fresh clone: 7/7 tests, checksums OK |
+| Trained model for the hidden test set | `models/nids_bundle.joblib`, run `python main.py predict <csv>` | fresh clone, no training: macro-F1 0.879 on the demo sample |
+| Paper (4 pages, IEEE, AI-use statement) | `paper/` and Overleaf | 4 pages, 0 errors, 0 warnings |
+| Live dashboard | https://ids.batch5ai.lol | live, scores uploads correctly |
+| Slides (Arabic and English) | shared decks and the course folder | final versions exported |
+
+**Rules from now on:** do not change the paper, the model, `requirements.txt` or the server
+without agreeing with Mohammed first; the submitted state is the current `main` branch.
+
+**Next steps:** (1) ask the instructor the three open questions in Section 8, N4 (a)-(c), and tell
+Mohammed the answers; (2) rehearse your slides and the live demo (N1-N3); (3) one joint rehearsal
+before demo day.
