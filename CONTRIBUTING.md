@@ -147,3 +147,8 @@ AI-use sentence describes your own work.
 **Space budget:** with your additions the paper reached 5 pages; Mohammed trimmed about 18 lines
 from his own sections, so it is exactly 4 pages again (checked on Overleaf, 0 errors) with about
 10 lines to spare. If R1 changes your sentence, keep it the same length or shorter.
+
+**Reply from Mesalam (2026-10-12):** R1 done. I deleted the dashboard-chart clause, so my
+AI-use sentence now ends "He also used it to draft his demo-day slides." (true: I used Claude on
+the slides). No dashboard change is pushed, so no redeploy is needed. Compiled with pdfLaTeX:
+4 pages, no errors or undefined references, about 12 lines to spare. Thank you for R2 and R3.
