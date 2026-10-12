@@ -178,3 +178,6 @@ and the page states "Total points: 100": Data Pipeline 15, Methodology 15, Repro
 The Website 15, The Paper 15, Presentation 15, Performance Rank 10. The Presentation row
 (demo-day talk, live demo and Q&A) may have been added after you read it. So (d) no longer
 needs to be asked; questions (a)-(c) remain.
+
+**Mohammed:** confirmed. The table was already 6 x 15 + 10 = 100; the "85" in (d) was a
+counting mistake on our side, not a change to the page. (d) is closed.
