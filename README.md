@@ -97,7 +97,7 @@ a joblib pickle and is only guaranteed to load with them. To check the setup, sc
 shipped demo sample, which carries true labels (expected macro-F1 0.879, accuracy 0.935 on a fresh clone):
 `python main.py predict models/demo_test_flows.csv -o reports/demo_predictions.csv`.
 
-The output has one row per input flow. `Label` holds the predicted class,
+The output has one row per input flow. `Label` holds the predicted class (and `ATT&CK` its MITRE technique),
 using the dataset's exact spellings, alongside the confidence, P(attack),
 severity and anomaly score. Large files are scored in chunks.
 
@@ -106,7 +106,7 @@ severity and anomaly score. Large files are scored in chunks.
 `python main.py serve [--host 0.0.0.0 --port 5000] [--model PATH]`
 
 * **Upload**: any CICFlowMeter CSV (column order does not matter, missing columns are imputed, `Label` optional).
-* **Threat report**: counts of malicious and critical flows, attack-type bars, severity pills, most-targeted destination IPs, source IPs and ports, and a triage table sorted by severity then confidence, with a text filter.
+* **Threat report**: counts of malicious and critical flows, attack-type bars tagged with the matching MITRE ATT&CK technique (e.g. T1110 Brute Force, T1499 Endpoint DoS), severity pills, most-targeted destination IPs, source IPs and ports, and a triage table sorted by severity then confidence, with a text filter.
 * **Anomalies**: flows the autoencoder finds abnormal but the classifier calls Benign are counted separately, for review.
 * **Evaluation**: if the upload has labels, live macro-F1, accuracy, detection rate, FPR and a confusion matrix.
 * **Export**: CSV of all predictions or only the malicious flows. `POST /api/predict` (file upload or `{"flows": [...]}`) returns JSON, and `GET /health` reports status.

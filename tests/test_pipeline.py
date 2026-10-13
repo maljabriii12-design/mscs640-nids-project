@@ -95,6 +95,17 @@ class TestModels(unittest.TestCase):
         self.assertEqual(m.get_params()["max_leaves"], 0)   # null = no limit, as in the reported runs
 
 
+class TestReportLabels(unittest.TestCase):
+    def test_every_attack_has_severity_and_attack_technique(self):
+        from nids.predict import ATTACK_TECHNIQUE, SEVERITY
+        attacks = {c for c in SEVERITY if c != "Benign"}
+        self.assertEqual(len(attacks), 14)
+        self.assertEqual(attacks, set(ATTACK_TECHNIQUE))
+        for tid, name in ATTACK_TECHNIQUE.values():
+            self.assertRegex(tid, r"^T\d{4}$")
+            self.assertTrue(name)
+
+
 class TestEndToEnd(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

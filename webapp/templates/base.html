@@ -59,6 +59,8 @@ dd,.meta,.muted{overflow-wrap:anywhere}
 .bar .t i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:5px;box-shadow:0 0 10px rgba(34,255,136,.5)}
 .bar .n{text-align:end;font-family:var(--mono);color:var(--muted)}
 .bar .k{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .tech{font-family:var(--mono);font-size:10px;color:var(--cyan);border:1px solid rgba(32,212,255,.45);border-radius:4px;padding:0 4px;margin-inline-end:6px;text-decoration:none}
+.bar .tech:hover{color:var(--green);border-color:var(--green)}
 .pill{display:inline-block;padding:1px 9px;border-radius:999px;font:600 12px var(--mono);border:1px solid currentColor}
 .Critical{background:var(--crit-soft);color:var(--crit)}
 .High{background:var(--high-soft);color:var(--high)}
@@ -139,7 +141,7 @@ var T = {
   model_note:"النموذج المُشرف يحدد نوع الهجوم، والمُرمِّز التلقائي ينبّه إلى التدفقات التي لا تشبه الحركة الطبيعية حتى لو لم تطابق أي فئة معروفة.",
   report:"تقرير التهديدات", scored:"تدفق حُلّل خلال", seconds:"ثانية", dl_mal:"تنزيل التدفقات الخبيثة", dl_all:"تنزيل كل النتائج", new_upload:"رفع ملف جديد",
   k_flows:"تدفقًا حُلّل", k_mal:"خبيث", k_crit:"خطورة حرجة (Bot و Infiltration و SQLi)", k_anom:"شاذ لكنه صُنّف طبيعيًا (للمراجعة)", k_high:"خطورة عالية",
-  attack_types:"أنواع الهجمات المكتشفة", no_mal:"لم تُكتشف تدفقات خبيثة.", targeted:"الأكثر استهدافًا",
+  attack_types:"أنواع الهجمات المكتشفة", no_mal:"لم تُكتشف تدفقات خبيثة.", attck_note:"الوسم = تقنية MITRE ATT&CK المقابلة (اضغط للتفاصيل).", targeted:"الأكثر استهدافًا",
   g_dst_ip:"عنوان IP الوجهة", g_src_ip:"عنوان IP المصدر", g_dst_port:"منفذ الوجهة", no_hosts:"لا توجد أعمدة عناوين أو منافذ في هذا الملف.",
   evaluation:"التقييم مقابل التسميات المرفوعة", e_f1:"macro F1", e_acc:"الدقة", e_dr:"نسبة اكتشاف الهجمات", e_fpr:"نسبة الإنذار الكاذب على الطبيعي",
   cm:"مصفوفة الالتباس (أعداد)", triage:"التدفقات الخبيثة حسب الخطورة والثقة", filter:"تصفية (IP، منفذ، نوع الهجوم…)",

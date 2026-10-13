@@ -22,9 +22,10 @@
 <div class="grid g2" style="margin-top:16px">
   <div class="panel">
     <h2 data-i18n="attack_types">Detected attack types</h2>
-    {% for k, v, w in r.class_bars %}
-      <div class="bar"><span class="k" title="{{ k }}">{{ k }}</span><span class="t"><i style="width:{{ w }}%"></i></span><span class="n">{{ "{:,}".format(v) }}</span></div>
+    {% for k, v, w, tid, tname in r.class_bars %}
+      <div class="bar"><span class="k" title="{{ k }}{% if tid %} · MITRE ATT&amp;CK {{ tid }}: {{ tname }}{% endif %}">{% if tid %}<a class="tech" href="https://attack.mitre.org/techniques/{{ tid }}/" target="_blank" rel="noopener">{{ tid }}</a>{% endif %}{{ k }}</span><span class="t"><i style="width:{{ w }}%"></i></span><span class="n">{{ "{:,}".format(v) }}</span></div>
     {% else %}<p class="muted" data-i18n="no_mal">No malicious flows detected.</p>{% endfor %}
+    {% if r.class_bars %}<p class="muted" style="font-size:12px;margin-top:6px" data-i18n-html="attck_note">Tags = the matching MITRE ATT&amp;CK technique (click for details).</p>{% endif %}
     <div class="row" style="margin-top:14px">
       {% for s, n in r.severity %}<span class="pill {{ s }}"><span data-i18n="sev_{{ s }}">{{ s }}</span>: {{ "{:,}".format(n) }}</span>{% endfor %}
     </div>

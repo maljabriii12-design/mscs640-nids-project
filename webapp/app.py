@@ -28,7 +28,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from nids.config import BENIGN  # noqa: E402
-from nids.predict import SEVERITY_ORDER, load_bundle, predict_frame  # noqa: E402
+from nids.predict import ATTACK_TECHNIQUE, SEVERITY_ORDER, load_bundle, predict_frame  # noqa: E402
 
 log = logging.getLogger(__name__)
 MAX_TABLE_ROWS = 500
@@ -76,7 +76,8 @@ def build_report(res: pd.DataFrame, filename: str, seconds: float) -> dict:
         "n_critical": int(sev.get("Critical", 0)),
         "n_high": int(sev.get("High", 0)),
         "seconds": seconds,
-        "class_bars": [(k, int(v), 100.0 * v / max(attack_counts.max(), 1))
+        "class_bars": [(k, int(v), 100.0 * v / max(attack_counts.max(), 1),
+                        *ATTACK_TECHNIQUE.get(k, ("", "")))
                        for k, v in attack_counts.items()],
         "severity": [(s, int(sev.get(s, 0))) for s in ("Critical", "High", "Medium")],
         "has_anomaly": "Anomalous" in res.columns,

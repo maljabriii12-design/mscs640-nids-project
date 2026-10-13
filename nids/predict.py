@@ -37,6 +37,26 @@ SEVERITY = {
 }
 SEVERITY_ORDER = {"Critical": 0, "High": 1, "Medium": 2, "Low": 3, "None": 4}
 
+# Closest MITRE ATT&CK technique per class, so an alert names the adversary behaviour
+# (https://attack.mitre.org/techniques/<id>/). Infilteration flows in this dataset are
+# mostly the internal scanning that follows the initial compromise, hence T1046.
+ATTACK_TECHNIQUE = {
+    "Bot": ("T1071", "Application Layer Protocol"),
+    "DDOS attack-HOIC": ("T1499", "Endpoint Denial of Service"),
+    "DDoS attacks-LOIC-HTTP": ("T1499", "Endpoint Denial of Service"),
+    "DDOS attack-LOIC-UDP": ("T1498", "Network Denial of Service"),
+    "DoS attacks-Hulk": ("T1499", "Endpoint Denial of Service"),
+    "DoS attacks-GoldenEye": ("T1499", "Endpoint Denial of Service"),
+    "DoS attacks-Slowloris": ("T1499", "Endpoint Denial of Service"),
+    "DoS attacks-SlowHTTPTest": ("T1499", "Endpoint Denial of Service"),
+    "FTP-BruteForce": ("T1110", "Brute Force"),
+    "SSH-Bruteforce": ("T1110", "Brute Force"),
+    "Brute Force -Web": ("T1110", "Brute Force"),
+    "Brute Force -XSS": ("T1190", "Exploit Public-Facing Application"),
+    "SQL Injection": ("T1190", "Exploit Public-Facing Application"),
+    "Infilteration": ("T1046", "Network Service Discovery"),
+}
+
 
 @lru_cache(maxsize=2)
 def load_bundle(path: str | None = None) -> dict:
@@ -70,6 +90,7 @@ def predict_frame(raw: pd.DataFrame, bundle: dict) -> pd.DataFrame:
     out["P(attack)"] = (1.0 - proba[:, bundle["benign_index"]]).round(4)
     out["Malicious"] = out["Predicted"] != BENIGN
     out["Severity"] = out["Predicted"].map(SEVERITY).fillna("High")
+    out["ATT&CK"] = out["Predicted"].map(lambda c: ATTACK_TECHNIQUE.get(c, ("", ""))[0])
     ae = bundle.get("autoencoder")
     if ae is not None:
         score = ae.score(X)
