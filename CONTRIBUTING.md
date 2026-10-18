@@ -206,11 +206,11 @@ scikit-learn) are the standard citations and match their published records.
 > 2. **تدرّب على شرائحك** 2 و3 و4 و12 وعلى العرض المباشر (القسم 8، N1 إلى N3).
 > 3. **بروفة مشتركة** مع محمد قبل يوم العرض، على العرض كاملًا والأسئلة المتوقعة (ملاحظات الشريحة 14).
 
-**Status:** all deliverables on the project page are done and verified on 2026-10-12.
+**Status:** all deliverables on the project page are done and verified on 2026-10-18 (repository now public).
 
 | Deliverable | Where | Checked |
 |---|---|---|
-| Repository (`main.py`, `requirements.txt`, `README.md`, commits from both of us) | this repository | fresh clone: 7/7 tests, checksums OK |
+| Repository (`main.py`, `requirements.txt`, `README.md`, commits from both of us) | this repository | anonymous fresh clone: 8/8 tests, checksums OK |
 | Trained model for the hidden test set | `models/nids_bundle.joblib`, run `python main.py predict <csv>` | fresh clone, no training: macro-F1 0.879 on the demo sample |
 | Paper (4 pages, IEEE, AI-use statement) | `paper/` and Overleaf | 4 pages, 0 errors, 0 warnings |
 | Live dashboard | https://ids.batch5ai.lol | live, scores uploads correctly |
