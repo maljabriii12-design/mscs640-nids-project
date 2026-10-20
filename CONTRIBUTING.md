@@ -228,3 +228,33 @@ before demo day.
 the expected questions with who answers each, and the demo-day checklist:
 <https://claude.ai/artifact/VfecUmj3ASmRfk7vd3oXYi> (you were invited as Editor at
 malnabit@jbj.edu.qa). Your parts: slides 1 (with Mohammed), 2, 3, 4, 12 and the closing line on 14.
+
+## 10. Website design changes (2026-10-20)
+
+> **ملاحظة لمسلم بالعربي:** اليوم عدّلت تصميم المواقع الخمسة في batch5ai.lol، في الشكل بس. ما تغيّر
+> النموذج ولا الـ API ولا منطق التحليل، ولا تعديلك f1ecce5 حق رفض ملفات CSV الناقصة.
+> في هذا المستودع تغيّر ملف واحد بس، `webapp/templates/base.html`، وهو الحين مطابق لنسخة السيرفر.
+> **سوّ `git pull` قبل ما تعدّل أي شي في الداشبورد**، عشان ما ترفع النسخة القديمة فوق الجديدة.
+
+What changed in `webapp/templates/base.html` (commit below; deployed to `/opt/nids` on g1):
+
+- **Header:** the row of five site links is replaced by an "Our sites" dropdown (`.hright` >
+  `.sites-menu` with `#smBtn` and `#smList`) plus the language button `#lang`, the same menu as
+  lab, phish and nids. The header now stays on one line on phones; `.meta` hides below 640px and
+  `.status` below 480px. `header{z-index:50}` keeps the open menu above the page.
+- **Footer:** now matches the home page: `© 2026 JBJ · MSCS640 · Mohammed Al-Jabri and Mesalam
+  Al-Nabit`, Arabic from `T.ar.foot`.
+- **Strings:** new `T.ar` keys `nav_sites` and `foot`; `nav_home` is now «الصفحة الرئيسية».
+  English stays in the markup as before. Note: `setLang` writes English with `textContent` from
+  the `data-en` snapshot (`innerHTML`), so a literal `&` in English markup shows as `&amp;`;
+  write "and" instead.
+- **Look:** `--mono` starts with Share Tech Mono (the home page font, loaded from Google Fonts);
+  `--muted` is a little lighter (`#8aa3ba`) for readability.
+- **Link previews:** `og:*` and `twitter:card` meta tags; the image is
+  <https://lab.batch5ai.lol/og/ids.png>.
+
+Other sites changed the same day (not in this repository): phish (explanation hints under the
+verdict, loading state, "how it works", recent scans), nids (same menu and footer), lab (its
+animations now stop when the visitor's device asks for reduced motion), and the home page (its
+own preview image). Server backups of every changed file: `*.bak-before-design` and
+`*.bak-before-unify`.
