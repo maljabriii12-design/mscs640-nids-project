@@ -33,6 +33,20 @@ from nids.predict import ATTACK_TECHNIQUE, SEVERITY_ORDER, load_bundle, predict_
 log = logging.getLogger(__name__)
 MAX_TABLE_ROWS = 500
 MAX_REPORTS = 8
+MAX_MISSING_SHOWN = 10
+
+
+def missing_features(df: pd.DataFrame, bundle: dict) -> tuple[list[str], int]:
+    """Model feature columns absent from an upload, and how many the model expects."""
+    have = {str(c).strip() for c in df.columns}
+    expected = bundle["preprocessor"].selected_columns_
+    return [c for c in expected if c not in have], len(expected)
+
+
+def rejection_message(missing: list[str], total: int) -> str:
+    return (f"File rejected: missing {len(missing)} of the model's {total} feature columns. "
+            "Make sure it is a CICFlowMeter CSV with the CSE-CIC-IDS2018 columns. "
+            f"First missing: {', '.join(missing[:MAX_MISSING_SHOWN])}")
 
 
 def _confusion_png(y_true: pd.Series, y_pred: pd.Series) -> str:
@@ -142,10 +156,11 @@ def create_app(model_path: str | None = None) -> Flask:
         p = base / "demo_test_flows.csv"
         return p if p.exists() else None
 
-    def run(df: pd.DataFrame, name: str) -> str:
+    def run(df: pd.DataFrame, name: str, missing: list[str] = ()) -> str:
         t0 = time.time()
         res = predict_frame(df, bundle())
         rep = build_report(res, name, time.time() - t0)
+        rep["n_missing"] = len(missing)
         rid = uuid.uuid4().hex[:12]
         store[rid] = (res, rep)
         while len(store) > MAX_REPORTS:
@@ -155,7 +170,9 @@ def create_app(model_path: str | None = None) -> Flask:
     @app.get("/")
     def index():
         return render_template("index.html", card=model_card(), demo=demo_path() is not None,
-                               error=request.args.get("error"))
+                               error=request.args.get("error"),
+                               n_missing=request.args.get("n_missing", type=int),
+                               missing=request.args.get("missing", ""))
 
     @app.post("/analyze")
     def analyze():
@@ -168,8 +185,12 @@ def create_app(model_path: str | None = None) -> Flask:
             return redirect(url_for("index", error=f"Could not parse CSV: {e}"))
         if df.empty:
             return redirect(url_for("index", error="The file has no rows."))
+        missing, total = missing_features(df, bundle())
+        if len(missing) > total / 2:
+            return redirect(url_for("index", n_missing=len(missing),
+                                    missing=", ".join(missing[:MAX_MISSING_SHOWN])))
         try:
-            rid = run(df, f.filename)
+            rid = run(df, f.filename, missing)
         except Exception as e:
             log.exception("prediction failed")
             return redirect(url_for("index", error=f"Prediction failed: {e}"))
@@ -208,8 +229,13 @@ def create_app(model_path: str | None = None) -> Flask:
             df = pd.DataFrame(payload.get("flows", []))
         if df.empty:
             return jsonify({"error": "no flows supplied"}), 400
+        missing, total = missing_features(df, bundle())
+        if len(missing) > total / 2:
+            return jsonify({"error": rejection_message(missing, total),
+                            "missing_columns": missing[:MAX_MISSING_SHOWN]}), 400
         res = predict_frame(df, bundle())
         return jsonify({"n_flows": len(res), "n_malicious": int(res["Malicious"].sum()),
+                        "n_missing_columns": len(missing),
                         "predictions": res.to_dict("records")})
 
     @app.get("/health")

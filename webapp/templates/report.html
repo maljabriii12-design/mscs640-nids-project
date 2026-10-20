@@ -11,6 +11,7 @@
   </div>
 </div>
 {% if card.note %}<div class="warn">Model note: {{ card.note }}</div>{% endif %}
+{% if r.n_missing %}<div class="warn"><span data-i18n="warn_a">Warning: missing</span> {{ r.n_missing }} <span data-i18n="cols_of">of the model's</span> {{ card.n_features }} <span data-i18n="warn_b">feature columns. They were filled with values from the training data, so treat this report with caution.</span></div>{% endif %}
 
 <div class="grid g4">
   <div class="panel kpi"><div class="v">{{ "{:,}".format(r.n_flows) }}</div><div class="l" data-i18n="k_flows">flows analysed</div></div>

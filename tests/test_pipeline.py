@@ -162,9 +162,31 @@ class TestEndToEnd(unittest.TestCase):
         page = client.get(r.headers["Location"])
         self.assertEqual(page.status_code, 200)
         self.assertIn(b"Threat report", page.data)
-        api = client.post("/api/predict", json={"flows": [{"Dst Port": 22, "Protocol": 6}]})
+        flow = pd.read_csv(raw, nrows=1).iloc[0].to_dict()
+        api = client.post("/api/predict", json={"flows": [flow]})
         self.assertEqual(api.status_code, 200)
         self.assertEqual(json.loads(api.data)["n_flows"], 1)
+        self.assertEqual(json.loads(api.data)["n_missing_columns"], 0)
+
+        # a file with the wrong columns is rejected, not scored as all-Benign
+        wrong = b"Dst Port,Protocol\n22,6\n80,6\n"
+        r = client.post("/analyze", data={"file": (io.BytesIO(wrong), "wrong.csv")},
+                        content_type="multipart/form-data")
+        self.assertEqual(r.status_code, 302)
+        self.assertNotIn("/report/", r.headers["Location"])
+        self.assertIn(b"File rejected", client.get(r.headers["Location"]).data)
+        api = client.post("/api/predict", json={"flows": [{"Dst Port": 22, "Protocol": 6}]})
+        self.assertEqual(api.status_code, 400)
+        body = json.loads(api.data)
+        self.assertIn("File rejected", body["error"])
+        self.assertLessEqual(len(body["missing_columns"]), 10)
+
+        # a few missing columns: scored, with a warning on the report
+        part = pd.read_csv(raw, nrows=200).drop(columns=bundle["preprocessor"].selected_columns_[:3])
+        r = client.post("/analyze", data={"file": (io.BytesIO(part.to_csv(index=False).encode()), "part.csv")},
+                        content_type="multipart/form-data")
+        self.assertIn("/report/", r.headers["Location"])
+        self.assertIn(b"Warning: missing", client.get(r.headers["Location"]).data)
 
 
 if __name__ == "__main__":
